@@ -1,4 +1,5 @@
- *.aux
- *.log
- *.out
- *.gz
+cheat-sheet.aux
+cheat-sheet.out
+cheat-sheet.aux
+cheat-sheet.synctex.gz
+cheat-sheet.log
