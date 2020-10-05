@@ -9,6 +9,7 @@
 \usepackage{enumitem}
 \usepackage{mathtools}
 
+
 \numberwithin{equation}{section}
 
 \usepackage{titlesec,dsfont}
@@ -52,6 +53,9 @@
 \makeatother %Put this last of all
 
 
+\newcommand{\defeq}{\coloneqq}
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
 %Preamble end--------------------------------------------------
 
 
@@ -90,7 +94,7 @@ The recursive decomposition of the joint distribution into parents which charact
 P(x_1, ..., x_n) = \prod_i P(x_i|pa_i) \label{eq:bayes-net-char}
 \end{equation}
 
-\subsection{$d$-separation (blocking) in Bayesian networks}
+\subsection{$d$-separation (blocking) in Bayesian networks} \label{sec:blocking}
 A path $p$ is $d$-separated (or blocked) by a set of notes $Z$ if and only if
 \begin{enumerate}[noitemsep]
 \item $p$ contains a chain $i \rightarrow m \rightarrow j$ or a fork $i \leftarrow m \rightarrow j$ such that the middle node $m$ is in $Z$, or
@@ -252,6 +256,43 @@ If $Z$ satisfies the front-door criterion relative to $(X, Y)$ and if $P(x, z) >
 P(y|\hat{x}) = \sum_z P(z|x) \sum_{x'} P(y|x',z)P(x')
 \end{equation}
 
-Conditions (2) and (3) of the front-door definition are overly restrictive: e.g. nested combinations of back-door and front-door conditions are permissible (see [XXX LATER] for a more general set of conditions).
+Conditions (2) and (3) of the front-door definition are overly restrictive: e.g. nested combinations of back-door and front-door conditions are permissible (see Section~\ref{sec:do-calc} for a more general set of conditions).
+
+\section{Do-calculus} \label{sec:do-calc}
+
+The back-door and front-door criteria do not provide a complete set of rules for when/how causal effects can be computed. Do-calculus sidesteps the need for algebraic manipulation and provides a complete set of inference rules by which probabilistic sentences involving interventions and observations can be transformed into other such sentences, allowing a method of deriving/verifying claims about interventions. The aim is to compute causal effect expressions for $P(y|\hat{x})$ where $Y$ and $X$ are subsets of variables. When $P(y|\hat{x})$ can be reduced to an expression involving observable probabilistic quantities, we say that the causal effect of $X$ on $Y$ is \textbf{identifiable}.
+
+\subsection{Notation}
+\begin{itemize}[noitemsep]
+\item $G_{\overline{X}}$ = graph obtained by deleting from $G$ all arrows pointing into nodes in $X$
+\item $G_{\underline{X}}$ = graph obtained by deleting from $G$ all arrows pointing out of nodes in $X$
+\item $G_{\overline{X}\underline{Z}}$ = graph obtained by deleting from $G$ all arrows pointing into nodes in $X$ and out of nodes in $Z$
+\item $P(y|\hat{x},z) \defeq P(y,z|\hat{x}) / P(z|\hat{x})$, meaning the probability of observing $Y=y$ given an \textit{intervention} $X=x$ and an \textit{observation} $Z=z$
+\end{itemize}
+
+\subsection{Rules}
+
+\paragraph{Rule 1} (Insertion/deletion of observations)
+\begin{equation}
+P(y|\hat{x}, z, w) = P(y| \hat{x}, w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X}}}}.
+\end{equation}
+
+This rule is a reaffirmation of $d$-separation (Section~\ref{sec:blocking}) as a valid test for conditional independence in the distribution resulting from $do(X=x)$. The rule follows from the fact that deleting equations from the system ($G_{{\overline{X}}}$) does not introduce any dependencies among the remaining disturbance terms.
+
+
+\paragraph{Rule 2} (Action/observation exchange)
+\begin{equation}
+P(y|\hat{x},\hat{z},w) = P(y|\hat{x},z,w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X}\underline{Z}}}}.
+\end{equation}
+
+This rule provides a condition for an external intervention $do(Z=z)$ to have the same effect on $Y$ as the passive observation $Z=z$. The condition amounts to $\{X \cup W\}$ blocking all back-door paths from $Z$ to $Y$ (in $G_{\overline{X}}$), since $G_{\overline{X}\underline{Z}}$ retains all (and only) such paths.
+
+\paragraph{Rule 3} (Insertion/deletion of actions)
+\begin{equation}
+P(y|\hat{x},\hat{z},w) = P(y|\hat{x},w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X},\overline{Z(W)}}}}
+\end{equation}
+where $Z(W)$ is the set of $Z$-nodes that are not ancestors of any $W$-node in $G_{\overline{X}}$.
+
+This rule provides conditions for introducing (or deleting) an external intervention $do(Z=z)$ without affecting the probability of $Y=y$. The validity of this rule stems from simulating the intervention $do(Z=z)$ by the deletion of all equations corresponding to the variables in $Z$ (hence $G_{\overline{X} \overline{Z}}$).
 
 \end{document}
