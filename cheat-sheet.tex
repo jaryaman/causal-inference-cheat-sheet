@@ -297,8 +297,9 @@ where $Z(W)$ is the set of $Z$-nodes that are not ancestors of any $W$-node in $
 This rule provides conditions for introducing (or deleting) an external intervention $do(Z=z)$ without affecting the probability of $Y=y$. The validity of this rule stems from simulating the intervention $do(Z=z)$ by the deletion of all equations corresponding to the variables in $Z$ (hence $G_{\overline{X} \overline{Z}}$).
 
 \paragraph{Identifiability}
-A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules above that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities.
+A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules above that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. 
 
+Whilst a causal effect is not identifiable for \textit{every} joint distribution of variables if this condition is broken, it might be for \textit{some} probability densities. For example, an instrumental variable can yield a causal effect identifiable in a linear model in the the presence of a box pattern, but will not be generally identifiable (see Section 3.5 of Causality).
 
 
 
