@@ -238,7 +238,7 @@ This criterion demonstrates how confounders that are \textit{affected by} the tr
 \begin{center}
 \includegraphics[width=0.8\columnwidth]{figures/front-door.png}  
 \end{center}
-\caption{Example of the front-door criterion
+\caption{(Left) Example of the front-door criterion. The path $X \leftarrow U \rightarrow Y$ denotes an unobserved (latent) unobserved common cause. (Right) This is often represented as a \textbf{bi-directed path}. 
 }
 \label{Fig:front_door}
 \end{figure}
@@ -296,11 +296,14 @@ where $Z(W)$ is the set of $Z$-nodes that are not ancestors of any $W$-node in $
 
 This rule provides conditions for introducing (or deleting) an external intervention $do(Z=z)$ without affecting the probability of $Y=y$. The validity of this rule stems from simulating the intervention $do(Z=z)$ by the deletion of all equations corresponding to the variables in $Z$ (hence $G_{\overline{X} \overline{Z}}$).
 
+\paragraph{Completeness} A quantity $Q=P(y|do(x),z)$ is identifiable if and only if it can be reduced to a \textit{do}-free expression using the above 3 rules.
+
 \paragraph{Identifiability}
 A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules above that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. 
 
 Whilst a causal effect is not identifiable for \textit{every} joint distribution of variables if this condition is broken, it might be for \textit{some} probability densities. For example, an instrumental variable can yield a causal effect identifiable in a linear model in the the presence of a box pattern, but will not be generally identifiable (see Section 3.5 of Causality).
 
+\paragraph{Complete identifiability condition} A sufficient condition for identifying the causal effect $P(y|do(x))$ is that there exists no bi-directed path (i.e.\ a path composed entirely of bi-directed arcs, see Fig.~\ref{Fig:front_door}) between $X$ and any of its children. Prior to applying this criterion, all nodes which are not ancestors of $Y$ are deleted from the graph (i.e.\ only consider nodes which are on pathways from $X$ to $Y$). 
 
 
 \end{document}
