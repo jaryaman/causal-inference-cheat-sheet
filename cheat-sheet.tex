@@ -305,5 +305,26 @@ Whilst a causal effect is not identifiable for \textit{every} joint distribution
 
 \paragraph{Complete identifiability condition} A sufficient condition for identifying the causal effect $P(y|do(x))$ is that there exists no bi-directed path (i.e.\ a path composed entirely of bi-directed arcs, see Fig.~\ref{Fig:front_door}) between $X$ and any of its children. Prior to applying this criterion, all nodes which are not ancestors of $Y$ are deleted from the graph (i.e.\ only consider nodes which are on pathways from $X$ to $Y$). 
 
+\section{Actions, plans, and direct effects}
+
+Pearl defines two kinds of intervention:
+
+\begin{itemize}[noitemsep]
+\item Act: An intervention which results from a reactive policy, deriving from an agent's beliefs, disposition, and environmental inputs (or the ``outside'')
+\item Action: An intervention which results from a deliberative policy, deriving from an agent's free will (or the ``inside''; meditative traditions might not draw such a bright line between these two classifications as a  description of physical reality, but it is no doubt a useful distinction for reasoning about the future when conscious agents are involved)
+\end{itemize} 
+
+\subsection{Conditional actions and stochastic policies}
+In general, interventions may involve complex policies in which $X$ is made to respond according to e.g. a deterministic functional relationship $x=g(z)$, or more generally through a stochastic relationship whereby $X$ is set to $x$ with probability $P^*(x|z)$. 
+
+Let $P(y|do(X=g(z)))$ denote the distribution of $Y$ prevailing under the policy $do(x=g(z))$. Then,
+\begin{align}
+P(y|do(X=g(z))) &= \sum_z P(y|do(X=g(z)),z) P(z|do(X=g(z))) \\
+&= \sum_z P(y|\hat{x}, z)|_{x=g(z)} P(z) \nonumber \\
+&= E_z[P(y|\hat{x},z)|_{x=g(z)}]. \nonumber
+\end{align}
+Hence, the evaluation of the outcome of an intervention under a complicated conditional policy $P^*(x|z)$ amounts to being able to evaluate $P(y|\hat{x},z)$. The equality $P(z|do(X=g(z))) = P(z)$ stems from the fact that $Z$ \textbf{cannot} be a descendant of $X$: in other words, \textbf{one cannot define a coherent policy of action for $X$ based on an (indirect) effect of $X$ because actions change the distributions of their effects!}
+
+(Aside: I suppose one might argue about whether an agent has any choice over the form of $g(z)$)
 
 \end{document}
