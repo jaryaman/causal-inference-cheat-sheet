@@ -271,7 +271,7 @@ The back-door and front-door criteria do not provide a complete set of rules for
 \item $P(y|\hat{x},z) \defeq P(y,z|\hat{x}) / P(z|\hat{x})$, meaning the probability of observing $Y=y$ given an \textit{intervention} $X=x$ and an \textit{observation} $Z=z$
 \end{itemize}
 
-\subsection{Rules}
+\subsection{Rules} \label{sec:Rules}
 
 \paragraph{Rule 1} (Insertion/deletion of observations)
 \begin{equation}
@@ -298,12 +298,25 @@ This rule provides conditions for introducing (or deleting) an external interven
 
 \paragraph{Completeness} A quantity $Q=P(y|do(x),z)$ is identifiable if and only if it can be reduced to a \textit{do}-free expression using the above 3 rules.
 
-\paragraph{Identifiability}
-A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules above that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. 
+\subsection{Identifiability}
+A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules in Section~\ref{sec:Rules} that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. Figure \ref{Fig:graph_cond_ci} provides a set of graphical conditions; if any one is satisfied then $P(y|\hat{x})$ is identifiable, and satisfying at least one of the conditions is necessary for $P(y|\hat{x})$ to be identifiable. I.e. $P(y|\hat{x})$ is unidentifiable then no finite sequence of inference rules reduces $P(y|\hat{x})$ to a hat-free expression. Figure \ref{Fig:graph_cond_ci} can also be used to define an algorithm for deriving a closed-form expression for control queries in terms of observable quantities, see Section 4.3.3 of Causality (this is presumably what DoWhy uses).
 
-Whilst a causal effect is not identifiable for \textit{every} joint distribution of variables if this condition is broken, it might be for \textit{some} probability densities. For example, an instrumental variable can yield a causal effect identifiable in a linear model in the the presence of a box pattern, but will not be generally identifiable (see Section 3.5 of Causality).
 
-\paragraph{Complete identifiability condition} A sufficient condition for identifying the causal effect $P(y|do(x))$ is that there exists no bi-directed path (i.e.\ a path composed entirely of bi-directed arcs, see Fig.~\ref{Fig:front_door}) between $X$ and any of its children. Prior to applying this criterion, all nodes which are not ancestors of $Y$ are deleted from the graph (i.e.\ only consider nodes which are on pathways from $X$ to $Y$). 
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.8\columnwidth]{figures/graph-cond-ident-4-3-1.png}  
+\end{center}
+\caption{Graphical conditions for identification of causal effect (Theorem 4.3.1 Causality). Satisfying at least one renders the causal effect identifiable, whereas satisfying none implies unidentifiability of the causal effect.}
+\label{Fig:graph_cond_ci}
+\end{figure}
+
+\paragraph{Assorted facts on identifiability} 
+
+\begin{itemize}
+\item Whilst a causal effect is not identifiable for \textit{every} joint distribution of variables if this condition is broken, it might be for \textit{some} probability densities. For example, an instrumental variable can yield a causal effect identifiable in a linear model in the the presence of a bow pattern (Fig.~3.7A of Causality), but will not be generally identifiable (see Section 3.5 of Causality).
+\item If $P(y|\hat{x})$ is identifiable, then if a set of nodes $Z$ lies on a directed path from $X$ to $Y$, then $P(z|\hat{x})$ is also identifiable (lemma 4.3.4).
+\item \textbf{Complete identifiability condition} A sufficient condition for identifying the causal effect $P(y|do(x))$ is that there exists no bi-directed path (i.e.\ a path composed entirely of bi-directed arcs, see Fig.~\ref{Fig:front_door}) between $X$ and any of its children. Prior to applying this criterion, all nodes which are not ancestors of $Y$ are deleted from the graph (i.e.\ only consider nodes which are on pathways from $X$ to $Y$).
+\end{itemize}
 
 \section{Actions, plans, and direct effects}
 
@@ -317,14 +330,19 @@ Pearl defines two kinds of intervention:
 \subsection{Conditional actions and stochastic policies}
 In general, interventions may involve complex policies in which $X$ is made to respond according to e.g. a deterministic functional relationship $x=g(z)$, or more generally through a stochastic relationship whereby $X$ is set to $x$ with probability $P^*(x|z)$. 
 
-Let $P(y|do(X=g(z)))$ denote the distribution of $Y$ prevailing under the policy $do(x=g(z))$. Then,
+
+Let $P(y|do(X=g(z)))$ denote the distribution of $Y$ prevailing under the deterministic policy $do(x=g(z))$. Then,
 \begin{align}
 P(y|do(X=g(z))) &= \sum_z P(y|do(X=g(z)),z) P(z|do(X=g(z))) \\
 &= \sum_z P(y|\hat{x}, z)|_{x=g(z)} P(z) \nonumber \\
 &= E_z[P(y|\hat{x},z)|_{x=g(z)}]. \nonumber
 \end{align}
-Hence, the evaluation of the outcome of an intervention under a complicated conditional policy $P^*(x|z)$ amounts to being able to evaluate $P(y|\hat{x},z)$. The equality $P(z|do(X=g(z))) = P(z)$ stems from the fact that $Z$ \textbf{cannot} be a descendant of $X$: in other words, \textbf{one cannot define a coherent policy of action for $X$ based on an (indirect) effect of $X$ because actions change the distributions of their effects!}
+Hence, the evaluation of the outcome of an intervention under a complicated conditional policy $x=g(z)$ amounts to being able to evaluate $P(y|\hat{x},z)$. The equality $P(z|do(X=g(z))) = P(z)$ stems from the fact that $Z$ \textbf{cannot} be a descendant of $X$: in other words, \textbf{one cannot define a coherent policy of action for $X$ based on an (indirect) effect of $X$ because actions change the distributions of their effects!} (Aside: I suppose one might argue about whether an agent has any choice over the form of $g(z)$)
 
-(Aside: I suppose one might argue about whether an agent has any choice over the form of $g(z)$)
+Similarly, let $P(y)|_{P^*(x|z)}$ denote the distribution of $Y$ prevailing under the stochastic policy $P^*(x|z)$ -- i.e.\ given $Z=z$, $do(X=x)$  occurs with probability $P^*(x|z)$. Then,
+\begin{equation}
+P(y)|_{P^*(x|z)} = \sum_x \sum_z P(y|\hat{x}, z) P^*(x|z) P(z).
+\end{equation}
+Since $P^*(x|z)$ is specified externally, it is again the case that $P(y|\hat{x}, z)$ is sufficient for the identifiability of any stochastic policy which shapes the distribution of $X$ by the outcome of $Z$.
 
 \end{document}
