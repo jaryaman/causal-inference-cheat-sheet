@@ -9,6 +9,7 @@
 \usepackage{enumitem}
 \usepackage{mathtools}
 
+\usepackage{amsthm} % theorem
 
 \numberwithin{equation}{section}
 
@@ -56,6 +57,8 @@
 
 \newcommand{\defeq}{\coloneqq}
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+\newtheorem{thm}{Theorem}[section]
 
 %Preamble end--------------------------------------------------
 
@@ -306,7 +309,7 @@ A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identif
 \begin{center}
 \includegraphics[width=0.8\columnwidth]{figures/graph-cond-ident-4-3-1.png}  
 \end{center}
-\caption{Graphical conditions for identification of causal effect (Theorem 4.3.1 Causality). Satisfying at least one renders the causal effect identifiable, whereas satisfying none implies unidentifiability of the causal effect.}
+\caption{Graphical conditions for identification of causal effect (Theorem 4.3.1 Causality). Satisfying at least one renders the causal effect $P(y|\hat{x})$ identifiable, whereas satisfying none implies unidentifiability of the causal effect.}
 \label{Fig:graph_cond_ci}
 \end{figure}
 
@@ -344,5 +347,36 @@ Similarly, let $P(y)|_{P^*(x|z)}$ denote the distribution of $Y$ prevailing unde
 P(y)|_{P^*(x|z)} = \sum_x \sum_z P(y|\hat{x}, z) P^*(x|z) P(z).
 \end{equation}
 Since $P^*(x|z)$ is specified externally, it is again the case that $P(y|\hat{x}, z)$ is sufficient for the identifiability of any stochastic policy which shapes the distribution of $X$ by the outcome of $Z$.
+
+
+\subsection{Identification of dynamic plans}
+
+A \textbf{control problem}  consists of a DAG with vertex set $V$ partitioned into four disjoint sets $V=\{X,Z,U,Y\}$ where
+\begin{itemize}
+\item $X=$ the set of control variables (exposures, interventions, treatments, etc.)
+\item $Z=$ the set of observed variables, often called \textbf{covariates}
+\item $U=$ the set of unobserved (latent) variables, and
+\item $Y=$ an outcome variable
+\end{itemize}
+We are interested in settings where we have gathered data $\mathcal{D}=\{X,Z,Y\}$ for previous agents making actions $X$. The problem is, given a new instance of the system (e.g.\ a new patient whom we seek to treat), can we estimate the outcome of $\{do(x_1),...,do(x_n)\}$ using only the observational data $\mathcal{D}$. See Section 4.4.1 of Causality for a specific motivating example.
+
+Let control variables be ordered $X=X_1,...,X_n$ such that every $X_k$ is a non-descendant of $X_{k+j}$ ($j>0$) and let the outcome $Y$ be a descendant of $X_n$. A \textbf{plan} is an ordered sequence $(\hat{x}_1,...,\hat{x}_n)$ of value assignments to the control variables. A \textbf{conditional plan} is an ordered sequence $(\hat{g}_1(z_1),...,\hat{g}_n(z_n))$ where $\hat{g}_k(z_k)$ means ``set $X_k$ to $\hat{g}_k(z_k)$ whenever $Z_k=z_k$'', where the support $Z_k$ of each $g_k(z_k)$ must not contain any variables that descendants of $X_k$.
+
+\begin{thm}
+\textbf{Plan identification: the sequential back-door criterion}. The probability of the \textbf{unconditional} plan $P(y|\hat{x_1}, ..., \hat{x}_n)$ is identifiable if, for every $1 \leq k \leq n$ there exists a set $Z_k$ of covariates satisfying the following conditions:
+\begin{equation}
+Z_k \subseteq N_k
+\end{equation}
+where $N_k$ is the set of observed nodes that are non-descendants of any element of $\{X_k, X_{k+1},...,X_n\}$, and
+\begin{align}
+(Y \indep X_k | X_1,...,X_{k-1},Z_1,...,Z_k)_{{G_{\underline{X}_k,\overline{X}_{k+1},...,\overline{X}_{n}}}}
+\end{align}
+When these conditions are satisfied, the effect of the plan is given by
+\begin{align}
+P(y|\hat{x}_1,...,\hat{x}_n) = \sum_{z_1,...,z_n} P(y|z_1,...,z_n,x_1,...,x_n) \times \prod_{k=1}^n P(z_k|z_1,...,z_{k-1},x_1,...,x_{k-1})
+\end{align}
+\end{thm}
+
+
 
 \end{document}
