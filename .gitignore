@@ -1,5 +1,7 @@
-cheat-sheet.aux
-cheat-sheet.out
-cheat-sheet.aux
-cheat-sheet.synctex.gz
-cheat-sheet.log
+*.aux
+*.out
+*.aux
+*.synctex.gz
+*.log
+*.bbl
+*.blg

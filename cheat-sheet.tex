@@ -28,6 +28,9 @@
 \def\@seccntformat#1{\csname the#1\endcsname.\quad}
 \makeatother
 
+%Bibliography
+\usepackage[round]{natbib}
+\bibliographystyle{genetics}
 
 %Format captions
 \usepackage[ labelsep=period, justification=raggedright, margin=10pt,font={small},labelfont={small,normal,bf,sf}]{caption}
@@ -41,7 +44,7 @@
 
 %PUT ME LAST--------------------------------------------------
 \usepackage[colorlinks=true
-,urlcolor=black
+,urlcolor=blue
 ,anchorcolor=blue
 ,citecolor=blue
 ,filecolor=blue
@@ -59,6 +62,8 @@
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
 \newtheorem{thm}{Theorem}[section]
+\newtheorem{defn}{Definition}[section]
+\newtheorem{cor}{Corollary}[section]
 
 %Preamble end--------------------------------------------------
 
@@ -197,10 +202,10 @@ Theorem 3.2.5: Given a causal diagram $G$ of any Markovian model in which a subs
 \section{Inferring causal structure}
 \begin{itemize}
 \item IC algorithm is for inferring causal structure given observational data when there are no latent variables
-\item IC* algorithm is for inferring causal structure given observational data when there are latent variables. The PC algorithm is apparently more contemporary (see Spirtes et al 2010)
+\item IC* algorithm is for inferring causal structure given observational data when there are latent variables. The PC algorithm is apparently more contemporary (see \cite{spirtes10})
 \item There are local criteria for potential cause and genuine cause
 \item Spurious association: $X$ and $Y$ are spuriously associated if they are dependent in some context and there exists a latent common cause, as exemplified in the structure $Z_1 \rightarrow X \rightarrow Y \leftarrow Z_2$
-\item NOTEARS (Zheng et al.\ 2018) casts the structure learning problem as a continuous optimization problem over real matrices to avoid the superexponential combinatorial explosion with number of variables.
+\item NOTEARS \citep{zheng18} casts the structure learning problem as a continuous optimization problem over real matrices to avoid the superexponential combinatorial explosion with number of variables.
 \end{itemize}
 
 \section{Adjusting for confounding bias}
@@ -302,7 +307,7 @@ This rule provides conditions for introducing (or deleting) an external interven
 \paragraph{Completeness} A quantity $Q=P(y|do(x),z)$ is identifiable if and only if it can be reduced to a \textit{do}-free expression using the above 3 rules.
 
 \subsection{Identifiability}
-A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules in Section~\ref{sec:Rules} that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. Figure \ref{Fig:graph_cond_ci} provides a set of graphical conditions; if any one is satisfied then $P(y|\hat{x})$ is identifiable, and satisfying at least one of the conditions is necessary for $P(y|\hat{x})$ to be identifiable. I.e. $P(y|\hat{x})$ is unidentifiable then no finite sequence of inference rules reduces $P(y|\hat{x})$ to a hat-free expression. Figure \ref{Fig:graph_cond_ci} can also be used to define an algorithm for deriving a closed-form expression for control queries in terms of observable quantities, see Section 4.3.3 of Causality (this is presumably what DoWhy uses).
+A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules in Section~\ref{sec:Rules} that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. Figure \ref{Fig:graph_cond_ci} provides a set of graphical conditions; if any one is satisfied then $P(y|\hat{x})$ is identifiable, and satisfying at least one of the conditions is necessary for $P(y|\hat{x})$ to be identifiable. I.e. $P(y|\hat{x})$ is unidentifiable then no finite sequence of inference rules reduces $P(y|\hat{x})$ to a hat-free expression. Figure \ref{Fig:graph_cond_ci} can also be used to define an algorithm for deriving a closed-form expression for control queries in terms of observable quantities, an implementation in \texttt{R} is in the package \texttt{causaleffect}, see \cite{tikka17} and a Jupyter Notebook example \href{https://github.com/jaryaman/ML_demos/blob/master/Notebooks/do-calculus.ipynb}{here}.
 
 
 \begin{figure}
@@ -377,6 +382,52 @@ P(y|\hat{x}_1,...,\hat{x}_n) = \sum_{z_1,...,z_n} P(y|z_1,...,z_n,x_1,...,x_n) \
 \end{align}
 \end{thm}
 
+\subsection{Direct and indirect effects}
 
+We are often concerned with the extent to which a variable affects another directly, rather than the total causal effect mediated through all other intervening variables. For example, in cases of sex discrimination, we may be interested in asking the direct effect of an applicant's sex on the outcome of an applicant's job application. In effect, we are concerned with the causal effect of variable $X$ on $Y$ while all other factors in the analysis are held fixed (\textit{Ceteris paribus}).
+
+\begin{defn}
+\textbf{Direct effect}. The direct effect of $X$ on $Y$ is given by $P(y|\hat{x},\hat{s}_{XY})$ where $\hat{s}_{XY}$ is the set of all endogenous variables (i.e.\ variables in the model) except $X$ and $Y$
+\end{defn}
+
+\begin{cor}
+The direct effect of $X$ on $Y$ is given by $P(y|\hat{x}, \hat{pa}_{Y \setminus X})$ where $pa_{Y \setminus X}$ is any realization of the parents of $Y$ excluding $X$.
+\end{cor}
+
+It is sometimes meaningful to average the direct effect over all levels of $pa_{Y\setminus X}$. To do this, we define the natural direct effect:
+
+\begin{defn}
+\textbf{Natural direct effect}. The natural direct effect ($DE_{x,x'}(Y)$) is defined as
+\begin{equation}
+DE_{x,x'}(Y) = E[Y(x', Z(x)) - E(Y(x))]
+\end{equation}
+where $Z= pa_{Y\setminus X}$, and $Y(x', Z(x))$ is the value that $Y$ would attain under the counterfactual scenario of $X=x'$, but $Z$ retaining the values under the setting $X=x$.
+\end{defn}
+
+The natural direct effect involves probabilities of nested counterfactuals, and cannot generally be written in terms of the $do(x)$ operator. However, if certain assumptions of ``no confounding'' are deemed valid, the natural direct effect can be reduced to 
+
+\begin{equation}
+DE_{x,x'}(Y) = \sum_z [E(Y|do(x', z)) - E(Y| do(x,z))]P(z|do(x))
+\end{equation}
+which is simply a weighted average of controlled direct effects. 
+
+We can also define the indirect effect which quantifies the influence of $X$ on $Y$ through all paths except for the direct path from $X \rightarrow Y$.
+\begin{defn}
+\textbf{Indirect effect}. The natural indirect effect ($IE_{x,x'}(Y)$) is defined as
+\begin{equation}
+IE_{x,x'}(Y) = E[Y(x, Z(x')) - E(Y(x))]
+\end{equation}
+\end{defn}
+We can define the total effect of a transition to be the \textit{difference} between the direct effect of that transition and the indirect effect of the reverse transition
+\begin{defn}
+\textbf{Total effect}. The total effect ($TE_{x,x'}(Y)$) is defined as
+\begin{equation}
+TE_{x,x'}(Y) \defeq E[Y(x') - E(Y(x))] = DE_{x,x'}(Y) - IE_{x',x}(Y)
+\end{equation}
+\end{defn}
+
+
+\newpage
+\bibliography{causality.bib} 
 
 \end{document}
