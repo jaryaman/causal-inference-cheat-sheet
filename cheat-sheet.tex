@@ -96,32 +96,45 @@ Last compiled: \today
 \item Variance: $\sigma_X^2 = E[(X - E(x))^2]$
 \item Covariance: $\sigma_{XY} = E[(X-E(X))(Y-E(Y))]$
 \item Correlation coefficient: $\rho_{XY}=\sigma_{XY}/(\sigma_X \sigma_Y)$
-\item Regression coefficient of $X$ on $Y$: $r_{XY} = \rho_{XY} \sigma_X/\sigma_Y = \sigma_{XY}/(\sigma_Y^2)$ (for the equation $X = r_{XY} Y + c + \mathcal{N}(0, \sigma^2)$)
+\item Regression coefficient of $Y$ on $X$: $r_{YX} = \rho_{XY} \sigma_Y/\sigma_X = \sigma_{XY}/(\sigma_X^2)$ (for the equation $Y = r_{YX} X + c + \mathcal{N}(0, \sigma^2)$)
 \item Conditional independence: $(X \indep Y | Z) \iff P(x|y,z) = P(x|z) $
+\item Partial correlation $\rho_{XY\cdot Z}$: The correlation between residuals $e_X$ and $e_Y$ resulting from the linear regression of $X$ with $Z$ and $Y$ with $Z$, respectively.
 \end{itemize}
+
+
+\section{Bayesian networks}
+Let a \textbf{graph} $G$ consist of a set of \textbf{vertices} (or \textbf{nodes}) $V$ and a set of \textbf{edges} $E$ that connect some pair of vertices. Each edge in a graph can be either directed, undirected, or bidirected. Bidirected edges will subsequently be used to denote unobserved common causes, or \textbf{confounders}. Let a \textbf{path} be a sequence of edges such that each edge starts with the vertex ending in the preceding edge. A path may go either along or against the arrows of a directed graph. Directed graphs may include cycles (e.g.\ $X \rightarrow Y$, $Y \rightarrow X$), which represent mutual causation or feedback processes, but not self-loops (e.g. $X \rightarrow X$).
 
 The recursive decomposition of the joint distribution into parents which characterises Bayesian networks is
 \begin{equation}
-P(x_1, ..., x_n) = \prod_i P(x_i|pa_i) \label{eq:bayes-net-char}
+P(x_1, ..., x_n) = \prod_i P(x_i|pa_i). \label{eq:bayes-net-char}
 \end{equation}
 
 \subsection{$d$-separation (blocking) in Bayesian networks} \label{sec:blocking}
-A path $p$ is $d$-separated (or blocked) by a set of notes $Z$ if and only if
+
+Let an arrow $pa_j \rightarrow x_j$ denote part of a directed acyclic graph (DAG) in which variables are represented by nodes, and arrows are drawn from each node of the parent set $PA_j$ towards the child node $X_j$.
+
+\begin{defn}
+\textbf{$d$-separation} A path $p$ is $d$-separated (or blocked) by a set of nodes $Z$ if and only if
 \begin{enumerate}[noitemsep]
 \item $p$ contains a chain $i \rightarrow m \rightarrow j$ or a fork $i \leftarrow m \rightarrow j$ such that the middle node $m$ is in $Z$, or
 \item $p$ contains a collider $i \rightarrow m \leftarrow j$ such that the middle node $m$ is not in $Z$ and such that no descendant of $m$ is in $Z$
 \end{enumerate}
-where an arrow $pa_j \rightarrow x_j$ denotes part of a directed acyclic graph (DAG) in which variables are represented by nodes and arrows are drawn from each node of the parent set $PA_j$ towards the child node $X_j$.
+A set $Z$ d-separates $X$ from $Y$ if and only if $Z$ blocks \textbf{every} path from a node in $X$ to a node in $Y$
+\end{defn}
 
-\paragraph{Probabilistic implications of $d$-separation} 
-Consequently, if $X$ and $Y$ are $d$-separated by $Z$ in a DAG $G$, then $(X \indep Y | Z)$ in every distribution compatible with $G$. Conversely, if $X$, $Y$, and $Z$ are \textit{not} $d$-separated by $Z$ in a DAG $G$ then $X$ and $Y$ are dependent conditional on $Z$ in almost all distributions compatible with $G$ (assuming no parameter fine-tuning).
+\begin{thm}
+\textbf{Probabilistic implications of $d$-separation} Consequently, if $X$ and $Y$ are $d$-separated by $Z$ in a DAG $G$, then $(X \indep Y | Z)$ in every distribution compatible with $G$. Conversely, if $X$, $Y$, and $Z$ are \textit{not} $d$-separated by $Z$ in a DAG $G$ then $X$ and $Y$ are dependent conditional on $Z$ in almost all distributions compatible with $G$ (assuming no parameter fine-tuning).
+\end{thm}
 
 \section{Functional causal models}
 A functional causal model consists of a set of equations of the form
 \begin{equation}
 x_i = f_i(pa_i, u_i), \quad i=1,...,n \label{eq:func-caus-mod}
 \end{equation}
-where $pa_i$ are the set of variables (parents) that directly determine the value of $X_i$ and $U_i$ represents errors (or ``disturbances'') due to omitted factors. When some disturbances $U_i$ are judged to be dependent, it is customary to denote such dependencies in a causal graph with double-headed arrows. If the causal diagram is acyclic, then the corresponding model is called \textit{semi-Markovian} and the values of the variables $X$ are uniquely determined by those of the variables $U$. If the error terms $U$ are jointly independent, the model is called \textit{Markovian}.
+where $pa_i$ are the set of variables (parents) that directly determine the value of $X_i$ (i.e.\ its direct causes) and $U_i$ represents errors (or ``disturbances'') due to omitted factors. Eq.\eqref{eq:func-caus-mod} is called a causal model if each equation represents the process by which the \textit{value} (not merely the probability) of variable $X_i$ is selected.
+
+When some disturbances $U_i$ are judged to be dependent, it is customary to denote such dependencies in a causal graph with double-headed arrows. If the causal diagram is acyclic, then the corresponding model is called \textit{semi-Markovian} and the values of the variables $X$ are uniquely determined by those of the variables $U$. If the error terms $U$ are jointly independent, the model is called \textit{Markovian}.
 
 Linear structural equation models obey
 \begin{equation}
@@ -428,6 +441,69 @@ TE_{x,x'}(Y) \defeq E[Y(x') - E(Y(x))] = DE_{x,x'}(Y) - IE_{x',x}(Y)
 \end{equation}
 \end{defn}
 
+\section{Causality and structural models}
+
+Let's rewrite Eq.\eqref{eq:func-caus-mod} as
+\begin{equation}
+x_i = f_i(pa_i, \epsilon_i), \quad i=1,...,n. 
+\end{equation}
+
+
+In general, for the \textbf{partial correlation} $\rho_{XY\cdot Z}$, 
+\begin{equation}
+(X \indep Y | Z) \implies \rho_{XY\cdot Z} = 0 
+\end{equation}
+and therefore, in \textbf{any} Markovian model with DAG $G$, the partial correlation $\rho_{XY\cdot Z}$ vanishes whenever the nodes corresponding to the variables in $Z$ $d$-separate node $X$ from node $Y$ in $G$, regardless of model parameters. Moreover, no other partial correlation vanishes, for all model parameters. \textbf{[Q: Not sure if this is general or only for linear models]}
+
+\subsection{Linear structural equation models}
+
+Linear structural equation models (SEMs) obey
+\begin{equation}
+x_i = \sum_{k \neq i} \alpha_{ik} x_k + \epsilon_i, \quad i=1,...,n  \label{eq:linear_sem}
+\end{equation}
+If, in Eq.\eqref{eq:linear_sem} 
+\begin{equation}
+\epsilon \sim \mathcal{N}(\mu, \Sigma)
+\end{equation}
+then $X_i$ will also be multivariate normal, and the SEM will be entirely determined by the set of correlation coefficients $\rho_{ij}$. For a linear SEM
+\begin{equation}
+\rho_{XY\cdot Z} = 0 \iff (X \indep Y | Z).
+\end{equation}
+
+Define the conditional variance $\sigma^2_{X|z}$, conditional covariance $\sigma^2_{XY|z}$, and the conditional covariance $\rho_{XY|z}$. For multivariate normal, $\sigma^2_{X|z}$, $\sigma^2_{XY|z}$, and $\rho_{XY|z}$ are all independent of the value of $z$. For the MVN, the \textbf{partial} variance $\sigma^2_{X\cdot Z}$, covariance $\sigma_{XY\cdot Z}$, and correlation $\rho_{XY\cdot Z}$ all coincide with the conditional variance, covariance, and correlation respectively (although this is not generally the case). 
+
+A \textbf{partial regression coefficient}, $r_{YX\cdot Z}$ is given by
+\begin{equation}
+r_{YX\cdot Z} = \rho_{YX\cdot Z} \frac{\sigma_{Y\cdot Z}}{\sigma_{X\cdot Z}}
+\end{equation}
+and is equal to the coefficient of $X$ in the linear regression of $Y$ on $X$ and $Z$. So, the coefficient of $x$ in the regression equation
+\begin{equation}
+y = ax + b_1 z_1 +...+ b_k z_k
+\end{equation}
+is
+\begin{equation}
+a=r_{YX\cdot Z_1Z_2...Z_k}
+\end{equation}
+
+\begin{thm}
+\textbf{$d$-Separation in General Linear Models} For any linear model Eq.\eqref{eq:linear_sem}, which may include cycles and bidirected arcs (i.e. dependent $\epsilon$ between different variables), $\rho_{XY\cdot Z}=0$ if $Z$ d-separates $X$ from $Y$, where bidirected arcs between $i$ and $j$ are interpreted as a latent common parent $i \leftarrow L \rightarrow j$. \label{thm:d-sep-lin-model}
+\end{thm}
+
+Theorem \ref{thm:d-sep-lin-model} provides a method for finding models in the context of linear SEMs: by searching over all $\rho_{XY\cdot Z}$, we can construct a DAG. Not all partial correlations need to be searched.
+
+\begin{defn}
+\textbf{Basis} Let $S$ be a set of partial correlations. A basis $B$ for $S$ is a set of zero partial correlations where (i) $B$ implies the zero of every element of $S$ and (ii) no proper subset of $B$ sustains such an implication.
+\end{defn}
+
+An obvious choice of basis for a DAG $D$ is
+\begin{equation}
+B = \{\rho_{ij\cdot pa_{i}} | i>j \} 
+\end{equation}
+where $i$ ranges over all nodes in $D$ and $j$ ranges over all predecessors of $i$ in any order that agrees with the arrows of $D$. More economical choice of basis exist, such as a Graphical Basis. 
+
+\begin{thm}
+\textbf{Markov linear-normal equivalence} Two Markovian linear-normal models are observationally indistinguishable if every covariance matrix generated by one model can be parametrically generated by the other (covariance equivalent). Two such models are covariance equivalent if and only if their corresponding graphs have the same sets of zero partial correlations. Moreover, two such models are covariance equivalent if and only if they have the same edges and the same sets of $v$-structures. (I.e. arrows can be reversed as long as they do not alter $v$-structures)
+\end{thm}
 
 \newpage
 \bibliography{causality.bib} 
