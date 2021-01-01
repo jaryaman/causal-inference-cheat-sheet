@@ -179,9 +179,9 @@ Given evidence $e=\{X_{obs}, Y_{obs}\}$, to compute probability of $Y=y$ under h
 \end{enumerate}
 
 \section{Causal Bayesian networks}
-Given two disjoint sets of variables $X$ and $Y$, the \textbf{causal effect} of $X$ on $Y$, denoted as $P(y|\hat{x})$ or $P(y|do(x))$, is the probability of $Y=y$ by deleting all equations from Eq.\eqref{eq:func-caus-mod} where variables $X$ are on the l.h.s., and substituting $X=x$ in the remaining equations.
-
-This corresponds to mutilating the DAG such that all arrows pointing directly to $X_i$ are removed. \textbf{Amputation is the difference between seeing and doing}.
+\begin{defn}
+\textbf{Causal effect} Given two disjoint sets of variables $X$ and $Y$, the \textbf{causal effect} of $X$ on $Y$, denoted as $P(y|\hat{x})$ or $P(y|do(x))$, is the probability of $Y=y$ by deleting all equations from Eq.\eqref{eq:func-caus-mod} where variables $X$ are on the l.h.s., and substituting $X=x$ in the remaining equations. This corresponds to mutilating the DAG such that all arrows pointing directly to $X$ are removed. \textbf{Amputation is the difference between seeing and doing}.
+\end{defn}
 
 For an atomic intervention, we get the \textit{truncated factorization} formula
 \begin{equation}
@@ -414,7 +414,7 @@ It is sometimes meaningful to average the direct effect over all levels of $pa_{
 \begin{defn}
 \textbf{Natural direct effect}. The natural direct effect ($DE_{x,x'}(Y)$) is defined as
 \begin{equation}
-DE_{x,x'}(Y) = E[Y(x', Z(x)) - E(Y(x))]
+DE_{x,x'}(Y) \defeq E[Y(x', Z(x)) - E(Y(x))]
 \end{equation}
 where $Z= pa_{Y\setminus X}$, and $Y(x', Z(x))$ is the value that $Y$ would attain under the counterfactual scenario of $X=x'$, but $Z$ retaining the values under the setting $X=x$.
 \end{defn}
@@ -433,13 +433,21 @@ We can also define the indirect effect which quantifies the influence of $X$ on 
 IE_{x,x'}(Y) = E[Y(x, Z(x')) - E(Y(x))]
 \end{equation}
 \end{defn}
-We can define the total effect of a transition to be the \textit{difference} between the direct effect of that transition and the indirect effect of the reverse transition
+We can define 
 \begin{defn}
-\textbf{Total effect}. The total effect ($TE_{x,x'}(Y)$) is defined as
+\textbf{Total effect}. The total effect of $X$ on $Y$ is given by $P(y|do(x))$, namely, the distribution of $Y$ while $X$ is held constant at $x$ and all other variables are permitted to run their natural course.  \textbf{Confusingly}, we also sometimes denote the total effect $TE_{x,x'}(Y)$ as 
 \begin{equation}
-TE_{x,x'}(Y) \defeq E[Y(x') - E(Y(x))] = DE_{x,x'}(Y) - IE_{x',x}(Y)
+TE_{x,x'}(Y) \defeq E[Y(x') - E(Y(x))] 
 \end{equation}
+\textbf{TODO: Write $TE_{x,x'}(Y)$ in terms of $P(y|do(x))$?}
 \end{defn}
+
+\begin{thm}
+\textbf{Relationship between total effect, direct effect, and indirect effect} The total effect of a transition is the \textit{difference} between the direct effect of that transition and the indirect effect of the reverse transition
+\begin{equation}
+TE_{x,x'}(Y) = DE_{x,x'}(Y) - IE_{x',x}(Y)
+\end{equation}
+\end{thm}
 
 \section{Causality and structural models}
 
@@ -447,13 +455,29 @@ Let's rewrite Eq.\eqref{eq:func-caus-mod} as
 \begin{equation}
 x_i = f_i(pa_i, \epsilon_i), \quad i=1,...,n. 
 \end{equation}
-
-
 In general, for the \textbf{partial correlation} $\rho_{XY\cdot Z}$, 
 \begin{equation}
 (X \indep Y | Z) \implies \rho_{XY\cdot Z} = 0 
 \end{equation}
 and therefore, in \textbf{any} Markovian model with DAG $G$, the partial correlation $\rho_{XY\cdot Z}$ vanishes whenever the nodes corresponding to the variables in $Z$ $d$-separate node $X$ from node $Y$ in $G$, regardless of model parameters. Moreover, no other partial correlation vanishes, for all model parameters. \textbf{[Q: Not sure if this is general or only for linear models]}
+
+\begin{thm}
+\textbf{Test for correlation between error terms} For any two non-adjacent variables $X$ and $Y$, where $Y$ is \textbf{not} a parent of $X$, a sufficient test of whether $\epsilon_X$ and $\epsilon_Y$ are uncorrelated is if the following equality holds:
+\begin{equation}
+E[Y|x,do(S_{XY})] = E[Y|do(x),do(S_{XY})] \label{eq:test-corr-error}
+\end{equation}
+where $S_{XY}$ stands for (any setting of) all variables in the model excluding $X$ and $Y$. If $\epsilon_X$ and $\epsilon_Y$ are uncorrelated then we are justified in having the absence of a bidirected arc between $X$ and $Y$. I.e.\ the omitted factors which directly affect $X$, $\epsilon_X$, are independent of the omitted factors which directly affect $Y$, $\epsilon_Y$.
+\end{thm}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.8\columnwidth]{figures/selection-bias.png}  
+\end{center}
+\caption{\textbf{An example of selection bias in a study}. A) Suppose, for a particular college, both grades and musical ability affect admission rate. B) Suppose investigators seek to understand the relationship between grades and musical ability, and measure $G$ and $M$ amongst students of the college in an attempt to estimate $\alpha$ ($\alpha=0$ in reality). The investigators assume the DAG in (B) and discover a strong negative relationship between $G$ and $M$. C) However, the investigators would discover that the equality in Eq.\eqref{eq:test-corr-error} does not hold, and therefore $U_1$ and $U_2$ are correlated (owing to a selection bias from $A=1$, see Berkson's paradox). Hence the investigators must correct their DAG to include a latent common cause between $G$ and $M$. In this case, $\alpha$ becomes unidentifiable since all of the causal effect can (and, here, is!) attributable to the latent common cause.}
+\label{Fig:selection-bias}
+\end{figure}
+
+Note that \textbf{selection bias} can arise when two uncorrelated factors have a common effect that is omitted from the analysis but influences the selection of samples for the study, see Fig.~\ref{Fig:selection-bias}. Hence bidirected arcs should be assumed to exist, by default, between any two nodes in a diagram -- since they at worst compromise the identifiability of model parameters. They should be deleted only by well-motivated justifications, such as the unlikely existence of a common cause, and the unlikely existence of selection bias.
 
 \subsection{Linear structural equation models}
 
@@ -469,6 +493,39 @@ then $X_i$ will also be multivariate normal, and the SEM will be entirely determ
 \begin{equation}
 \rho_{XY\cdot Z} = 0 \iff (X \indep Y | Z).
 \end{equation}
+
+
+\subsubsection{Interpretation}
+
+\begin{defn}
+\textbf{Structural equations} An equation 
+\begin{equation}
+y=\beta x + \epsilon \label{eq:linear-struct}
+\end{equation}
+is said to be structural if it is to be interpreted as follows: In an ideal experiment where we control $X$ to $x$ and any other set $Z$ of variables (not containing $X$ or $Y$) to $z$, the value of $Y$ is given by $\beta x + \epsilon$, where $\epsilon$ is not a function of the settings $x$ and $z$. \textbf{[I think: $\epsilon$ can be arbitrarily distributed, potentially correlated with $X$, but assumed to have $E[\epsilon]=0$.]}
+\end{defn}
+
+The equality sign in structural equations has a different behaviour to algebraic equality signs. In the context of observations, the equality sign in Eq.\eqref{eq:linear-struct} behaves symmetrically between $X$ and $Y$: e.g.\ observing $Y=0$ implies $\beta x = -\epsilon$. In contrast, in the context of interventions, the equality sign in Eq.\eqref{eq:linear-struct} behaves asymmetrically between $X$ and $Y$: e.g.\ setting $Y=0$ tells us nothing about the relationship between $x$ and $\epsilon$. 
+
+Furthermore, the strongest empirical claim made by Eq.\eqref{eq:linear-struct} is that
+\begin{equation}
+P(y|do(x), do(z)) = P(y|do(x))
+\end{equation}
+i.e.\ the statistics of $Y$ remain invariant to the manipulation of $Z$ under the condition of $do(x)$. In contrast, regression equations make no empirical claims whatsoever.
+
+The operational definition of the structural parameter $\beta$ in Eq.\eqref{eq:linear-struct} is
+\begin{equation}
+\beta = \frac{\partial}{\partial x}E[Y|do(x)]
+\end{equation}
+(since $E[Y|do(x)]=\beta x$). In words, $\beta$ is the rate of change in the expectation of $Y$ in an experiment where $X$ is held at $x$ by external control. This is true regardless of the correlation between $X$ and $\epsilon$ in non-experimental studies (e.g.\ via another equation $x=\alpha y + \delta$).
+
+As a consequence of the above, the operational definition of the error term $\epsilon$ is
+\begin{equation}
+\epsilon = y - E[Y|do(x)]
+\end{equation}
+(again since $E[Y|do(x)]=\beta x$). 
+
+\subsubsection{Estimation}
 
 Define the conditional variance $\sigma^2_{X|z}$, conditional covariance $\sigma^2_{XY|z}$, and the conditional covariance $\rho_{XY|z}$. For multivariate normal, $\sigma^2_{X|z}$, $\sigma^2_{XY|z}$, and $\rho_{XY|z}$ are all independent of the value of $z$. For the MVN, the \textbf{partial} variance $\sigma^2_{X\cdot Z}$, covariance $\sigma_{XY\cdot Z}$, and correlation $\rho_{XY\cdot Z}$ all coincide with the conditional variance, covariance, and correlation respectively (although this is not generally the case). 
 
