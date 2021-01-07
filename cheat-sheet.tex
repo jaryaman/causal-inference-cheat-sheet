@@ -402,7 +402,7 @@ P(y|\hat{x}_1,...,\hat{x}_n) = \sum_{z_1,...,z_n} P(y|z_1,...,z_n,x_1,...,x_n) \
 We are often concerned with the extent to which a variable affects another directly, rather than the total causal effect mediated through all other intervening variables. For example, in cases of sex discrimination, we may be interested in asking the direct effect of an applicant's sex on the outcome of an applicant's job application. In effect, we are concerned with the causal effect of variable $X$ on $Y$ while all other factors in the analysis are held fixed (\textit{Ceteris paribus}).
 
 \begin{defn}
-\textbf{Direct effect}. The direct effect of $X$ on $Y$ is given by $P(y|\hat{x},\hat{s}_{XY})$ where $\hat{s}_{XY}$ is the set of all endogenous variables (i.e.\ variables in the model) except $X$ and $Y$
+\textbf{Direct effect}. The direct effect of $X$ on $Y$ is given by $P(y|\hat{x},\hat{s}_{XY})$ where $\hat{s}_{XY}$ is the set of all variables in the model except $X$ and $Y$
 \end{defn}
 
 \begin{cor}
@@ -478,6 +478,33 @@ where $S_{XY}$ stands for (any setting of) all variables in the model excluding 
 \end{figure}
 
 Note that \textbf{selection bias} can arise when two uncorrelated factors have a common effect that is omitted from the analysis but influences the selection of samples for the study, see Fig.~\ref{Fig:selection-bias}. Hence bidirected arcs should be assumed to exist, by default, between any two nodes in a diagram -- since they at worst compromise the identifiability of model parameters. They should be deleted only by well-motivated justifications, such as the unlikely existence of a common cause, and the unlikely existence of selection bias.
+
+\subsection{Exogeneity and instrumental variables}
+
+\begin{defn}
+\textbf{General Exogeneity} Let $X$ and $Y$ be two sets of variables, and let $\lambda$ be any quantity which may be computed from a structural model $M$ (structural, statistical, etc.) in a theory $T$. We say that $X$ is exogenous relative to $(Y, \lambda ,T)$ if $\lambda$ is identifiable from the conditional distribution of $P(y|x)$, that is, if
+\begin{equation}
+P_{M_1}(y|x) = P_{M_2}(y|x) \implies \lambda(M_1) = \lambda(M_2)
+\end{equation}
+for any two models $M_1$ and $M_2$ satisfying theory $T$. 
+\end{defn}
+
+\begin{defn}
+\textbf{Instrumental variable} For the parameter $\lambda = P(w|do(z))$ where $W$ and $Z$ are two sets of variables in $Y$, then if $X$ is exogenous relative to $(Y, \lambda, T)$ then
+\begin{equation}
+P_{M_1}(z,w|x) = P_{M_2}(z,w|x) \implies P_{M_1}(w|do(z)) = P_{M_2}(w|do(z)).
+\end{equation}
+for any two models $M_1$ and $M_2$ satisfying theory $T$. Under these conditions, we call $X$ an instrumental variable for the causal effect $P(w|do(z))$
+\end{defn}
+
+\begin{cor}
+If $X$ is an instrumental variable for $P(w|do(z))$, then $P(w|do(z))$ is identifiable from $P(z,w|x)$. I.e. $X$ renders a causal effect $P(w|do(z))$ identifiable which $X$ itself does not directly participate in.
+\end{cor}
+
+An alternative definition of exogeneity may also be given, in terms of the correlation between errors and variables:
+\begin{defn}
+\textbf{Error-based exogeneity} A variable $X$ is exogenous relative to $\lambda=P(y|do(x))$ if $X$ is independent of all errors $\epsilon$ that influence $Y$, except those mediated by $X$. 
+\end{defn}
 
 \subsection{Linear structural equation models}
 
@@ -600,7 +627,7 @@ TE_{z,z'}(X) = E(X(z') - X(z))) &= r_{YX} = \beta \\
 \end{align}
 \textbf{[I've put in the $TE_{z,z'}(Y)$ stuff myself, but this follows from Theorem \ref{thm:back-door-total-effect}, right?]}
 
-\paragraph{To find proof:} In a linear SEM, to evaluate the partial effect of $X$ on $Y$ along a single path, take the product of all path coefficients for each endogenous edge. To evaluate the total effect for multiple branches, sum the partial effects across each branch (consisting of endogenous edges). Endogenous meaning, part of the model (i.e.\ observed).
+\paragraph{To find proof:} In a linear SEM, to evaluate the partial effect of $X$ on $Y$ along a single path, take the product of all path coefficients for each edge for all observed variables in the model. To evaluate the total effect for multiple branches, sum the partial effects across each branch (consisting of endogenous edges). 
 
 
 \newpage
