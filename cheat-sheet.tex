@@ -239,20 +239,23 @@ This criterion demonstrates how confounders that \textit{affect} the treatment v
 \label{Fig:front_door}
 \end{figure}
 
-\paragraph{Back-door} 
-A set of variables $Z$ satisfy the back-door criterion relative to an ordered pair of variables ($X_i$,$X_j$) in a DAG $G$ if:
+\begin{defn}
+\textbf{Back-door criterion} A set of variables $Z$ satisfy the back-door criterion relative to an ordered pair of variables ($X_i$,$X_j$) in a DAG $G$ if:
 \begin{enumerate}[noitemsep]
 \item no node in $Z$ is a descendant of $X_i$; and
 \item $Z$ blocks every path between $X_i$ and $X_j$ that contains an arrow into $X_i$
 \end{enumerate}
 Similarly, if $X$ and $Y$ are two disjoint subsets of nodes in $G$, then $Z$ satisfies the back-door criterion relative to $(X,Y)$ if it satisfies the criterion relative to any pair $(X_i, X_j)$ such that $X_i \in X$ and $X_j \in Y$.
+\end{defn}
 
-\paragraph{Back-door adjustment}
+\begin{thm}
+\textbf{Back-door adjustment}
 If a set of variables $Z$ satisfies the back-door criterion relative to $(X,Y)$, then the causal effect of $X$ on $Y$ is identifiable and is given by
 \begin{equation}
 P(y|\hat{x}) = \sum_z P(y|x,z)P(z).
 \end{equation}
-This corresponds to partitioning the population into groups that are homogeneous relative to Z, assessing the effect of X on Y in each homogeneous group, and then averaging the results. Conditioning in this way means that the observation $X=x$ cannot be distinguished from an intervention $do(x)$.
+This corresponds to partitioning the population into groups that are homogeneous relative to $Z$, assessing the effect of $X$ on $Y$ in each homogeneous group, and then averaging the results. Conditioning in this way means that the observation $X=x$ cannot be distinguished from an intervention $do(x)$. \label{thm:back-door-adjustment}
+\end{thm}
 
 \subsection{The front-door criterion}
 This criterion demonstrates how confounders that are \textit{affected by} the treatment variable can be used to facilitate causal inference.
@@ -266,21 +269,23 @@ This criterion demonstrates how confounders that are \textit{affected by} the tr
 \label{Fig:front_door}
 \end{figure}
 
-\paragraph{Front-door} 
-A set of variables $Z$ satisfy the front-door criterion relative to an ordered pair of variables $(X, Y)$ if:
+\begin{defn}
+\textbf{Front-door} A set of variables $Z$ satisfy the front-door criterion relative to an ordered pair of variables $(X, Y)$ if:
 \begin{enumerate}[noitemsep]
 \item $Z$ intercepts all directed paths from $X$ to $Y$; 
 \item there is no unblocked back-door path from $X$ to $Z$; and
 \item all back-door paths from $Z$ to $Y$ are blocked by $X$.
 \end{enumerate}
+\end{defn}
 
-\paragraph{Front-door adjustment}
-If $Z$ satisfies the front-door criterion relative to $(X, Y)$ and if $P(x, z) > 0$, then the causal effect of $X$ on $Y$ is identifiable and is given by
+\begin{thm}
+\textbf{Front-door adjustment} If $Z$ satisfies the front-door criterion relative to $(X, Y)$ and if $P(x, z) > 0$, then the causal effect of $X$ on $Y$ is identifiable and is given by
 \begin{equation}
 P(y|\hat{x}) = \sum_z P(z|x) \sum_{x'} P(y|x',z)P(x')
 \end{equation}
+\end{thm}
 
-Conditions (2) and (3) of the front-door definition are overly restrictive: e.g. nested combinations of back-door and front-door conditions are permissible (see Section~\ref{sec:do-calc} for a more general set of conditions).
+Conditions (2) and (3) of the front-door definition are overly restrictive: e.g. nested combinations of back-door and front-door conditions are permissible: see Section~\ref{sec:do-calc} for a more general set of conditions.
 
 \section{Do-calculus} \label{sec:do-calc}
 
@@ -296,28 +301,33 @@ The back-door and front-door criteria do not provide a complete set of rules for
 
 \subsection{Rules} \label{sec:Rules}
 
-\paragraph{Rule 1} (Insertion/deletion of observations)
+\begin{thm}
+\textbf{Rule 1} Insertion/deletion of observations: \label{thm:do-calc-ins-del-obs}
 \begin{equation}
 P(y|\hat{x}, z, w) = P(y| \hat{x}, w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X}}}}.
 \end{equation}
+\end{thm}
 
-This rule is a reaffirmation of $d$-separation (Section~\ref{sec:blocking}) as a valid test for conditional independence in the distribution resulting from $do(X=x)$. The rule follows from the fact that deleting equations from the system ($G_{{\overline{X}}}$) does not introduce any dependencies among the remaining disturbance terms.
+Theorem~\ref{thm:do-calc-ins-del-obs} is a reaffirmation of $d$-separation (Section~\ref{sec:blocking}) as a valid test for conditional independence in the distribution resulting from $do(X=x)$. The rule follows from the fact that deleting equations from the system ($G_{{\overline{X}}}$) does not introduce any dependencies among the remaining disturbance terms.
 
-
-\paragraph{Rule 2} (Action/observation exchange)
+\begin{thm}
+\textbf{Rule 2} Action/observation exchange: \label{thm:do-calc-act-obs-ex}
 \begin{equation}
 P(y|\hat{x},\hat{z},w) = P(y|\hat{x},z,w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X}\underline{Z}}}}.
 \end{equation}
+\end{thm}
 
-This rule provides a condition for an external intervention $do(Z=z)$ to have the same effect on $Y$ as the passive observation $Z=z$. The condition amounts to $\{X \cup W\}$ blocking all back-door paths from $Z$ to $Y$ (in $G_{\overline{X}}$), since $G_{\overline{X}\underline{Z}}$ retains all (and only) such paths.
+Theorem~/ref{thm:do-calc-act-obs-ex} provides a condition for an external intervention $do(Z=z)$ to have the same effect on $Y$ as the passive observation $Z=z$. The condition amounts to $\{X \cup W\}$ blocking all back-door paths from $Z$ to $Y$ (in $G_{\overline{X}}$), since $G_{\overline{X}\underline{Z}}$ retains all (and only) such paths.
 
-\paragraph{Rule 3} (Insertion/deletion of actions)
+\begin{thm}
+\textbf{Rule 3} Insertion/deletion of actions:  \label{thm:do-calc-ins-del-act}
 \begin{equation}
 P(y|\hat{x},\hat{z},w) = P(y|\hat{x},w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X},\overline{Z(W)}}}}
 \end{equation}
 where $Z(W)$ is the set of $Z$-nodes that are not ancestors of any $W$-node in $G_{\overline{X}}$.
+\end{thm}
 
-This rule provides conditions for introducing (or deleting) an external intervention $do(Z=z)$ without affecting the probability of $Y=y$. The validity of this rule stems from simulating the intervention $do(Z=z)$ by the deletion of all equations corresponding to the variables in $Z$ (hence $G_{\overline{X} \overline{Z}}$).
+Theorem~\ref{thm:do-calc-ins-del-act} provides conditions for introducing (or deleting) an external intervention $do(Z=z)$ without affecting the probability of $Y=y$. The validity of this rule stems from simulating the intervention $do(Z=z)$ by the deletion of all equations corresponding to the variables in $Z$ (hence $G_{\overline{X} \overline{Z}}$).
 
 \paragraph{Completeness} A quantity $Q=P(y|do(x),z)$ is identifiable if and only if it can be reduced to a \textit{do}-free expression using the above 3 rules.
 
@@ -621,14 +631,52 @@ Theorems \ref{thm:single-door-direct-effect} and \ref{thm:back-door-total-effect
 
 Some direct effects require evaluation of a broader causal effect first, in order to extract the direct effect of interest (see Fig.~\ref{Fig:instrument}). The parameter $\alpha$ cannot be directly estimated with Theorem \ref{thm:single-door-direct-effect} because of the confounder, or its constituents (since it has none). Instead, we may apply Theorem \ref{thm:back-door-total-effect} twice like so:
 \begin{align}
-TE_{z,z'}(Y) = E(Y(z') - Y(z)) &= r_{YZ} = \alpha \beta \\
-TE_{z,z'}(X) = E(X(z') - X(z))) &= r_{YX} = \beta \\
+P(Y|\hat{z}) &= r_{YZ} = \alpha \beta \\
+P(X|\hat{x}) &= r_{YX} = \beta \\
 \alpha = E(Y|\hat{x}) &= \frac{r_{YZ}}{r_{YX}} = \frac{P(Y|\hat{z})}{P(X|\hat{z})}
 \end{align}
-\textbf{[I've put in the $TE_{z,z'}(Y)$ stuff myself, but this follows from Theorem \ref{thm:back-door-total-effect}, right?]}
 
-\paragraph{To find proof:} In a linear SEM, to evaluate the partial effect of $X$ on $Y$ along a single path, take the product of all path coefficients for each edge for all observed variables in the model. To evaluate the total effect for multiple branches, sum the partial effects across each branch (consisting of endogenous edges). 
+\textbf{[TODO PROVE: ]} In a linear SEM, to evaluate the partial effect of $X$ on $Y$ along a single path, take the product of all path coefficients for each edge for all observed variables in the model. To evaluate the total effect for multiple branches, sum the partial effects across each branch (consisting of endogenous edges). 
 
+
+\section{Simpson's paradox}
+
+Simpson's paradox is a reversal effect observed in sub-populations.
+
+\begin{defn}
+\textbf{Simpson's paradox} The phenomenon whereby an event $C$ increases the probability of $E$ in a given population $p$ and, at the same time, decreases the probability of $E$ in every sub-population of $p$. In other words, if $F$ and $\neg F$ are two complementary properties describing two sub-populations, then it is possible to encounter the equalities:
+\begin{align}
+P(E|C) &> P(E|\neg C) \\
+P(E|C,F) &< P(E| \neg C, F) \nonumber \\
+P(E|C, \neg F) &< P(E| \neg C, \neg F). \nonumber
+\end{align}
+Note: Simpson's paradox is not strictly a paradox because it does not involve any contradiction.
+\end{defn}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.8\columnwidth]{figures/simpson.png}  
+\end{center}
+\caption{\textbf{Example of Simpson's paradox}. A. The recovery rate in the pooled population is greater with the drug, but for both the male and female populations the recovery rate is greater without the drug. B. Two causal models which are observationally equivalent capable of generating the data in (A). In (A), $P(E|do(C)) = \sum_F P(E|C,F) P(F)$  (Theorem~\ref{thm:back-door-adjustment}) which averages over sub-populations, whereas in (B), $P(E|do(C)) = P(E|C)$ (Theorem~\ref{thm:do-calc-act-obs-ex}) which uses the pooled data.
+}
+\label{Fig:simpson}
+\end{figure}
+
+An example dataset displaying Simpson's paradox is in Fig.~\ref{Fig:simpson} for a drug treatment ($C$), recovery ($E$), for sub-populations of gender ($F$). The question, therefore, is: "what is the total effect of the drug on recovery?". The solution to this question depends on the causal assumptions we bring to bear on the problem: two different causal models which are capable of generating the data yield different answers for the quantity $P(E|do(C))$, one of which averages over the subpopulations, and the other using pooled data. 
+
+\begin{thm}
+\textbf{Sure-thing Principle} An action $C$ that increases the probability of an event $E$ in each sub-population $F$ must also increase the probability of $E$ in the population as a whole, provided that the action does not change the distribution of the sub-populations. In other words, for dichotomous sub-populations $F$, if  \label{thm:sure-thing}
+\begin{align}
+P(E|do(C), F) &< P(E|do(\neg C), F) \\
+P(E|do(C), \neg F) &< P(E|do(\neg C), \neg F) \nonumber
+\end{align}
+then
+\begin{equation}
+P(E|do(C)) < P(E|do(\neg C))
+\end{equation}
+\end{thm}
+
+Theorem~\ref{thm:sure-thing} follows from do-calculus, and gives the intuitive result that if the drug in Fig.~\ref{Fig:simpson}A harms both men and women then one should not administer the drug if one does not know the patient's gender, despite the fact that the observational conditional densities obey $P(E|C)>P(E|\neg C)$. The ``paradox'' in the example arises because the males, who recover (regardless of the drug) more often than the females, are also more likely than the females to use the drug.
 
 \newpage
 \bibliography{causality.bib} 
