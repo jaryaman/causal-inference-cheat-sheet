@@ -17,8 +17,8 @@
 
 %Format section heading style
 \usepackage{sectsty}
-\sectionfont{\sffamily\bfseries\small}
-\subsectionfont{\sffamily\small\slshape}
+\sectionfont{\sffamily\bfseries\large}
+\subsectionfont{\sffamily\normalsize\slshape}
 \subsubsectionfont{\sffamily\small\itshape}
 \paragraphfont{\sffamily\small\textbf}
 
@@ -60,6 +60,18 @@
 
 \newcommand{\defeq}{\coloneqq}
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+% Make theorems bold
+\makeatletter
+\def\th@plain{%
+  \thm@notefont{}% same as heading font
+  \itshape % body font
+}
+\def\th@definition{%
+  \thm@notefont{}% same as heading font
+  \normalfont % body font
+}
+\makeatother
 
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{defn}{Definition}[section]
@@ -114,8 +126,8 @@ P(x_1, ..., x_n) = \prod_i P(x_i|pa_i). \label{eq:bayes-net-char}
 
 Let an arrow $pa_j \rightarrow x_j$ denote part of a directed acyclic graph (DAG) in which variables are represented by nodes, and arrows are drawn from each node of the parent set $PA_j$ towards the child node $X_j$.
 
-\begin{defn}
-\textbf{$d$-separation} A path $p$ is $d$-separated (or blocked) by a set of nodes $Z$ if and only if
+\begin{defn}[$d$-separation]
+A path $p$ is $d$-separated (or blocked) by a set of nodes $Z$ if and only if
 \begin{enumerate}[noitemsep]
 \item $p$ contains a chain $i \rightarrow m \rightarrow j$ or a fork $i \leftarrow m \rightarrow j$ such that the middle node $m$ is in $Z$, or
 \item $p$ contains a collider $i \rightarrow m \leftarrow j$ such that the middle node $m$ is not in $Z$ and such that no descendant of $m$ is in $Z$
@@ -123,8 +135,8 @@ Let an arrow $pa_j \rightarrow x_j$ denote part of a directed acyclic graph (DAG
 A set $Z$ d-separates $X$ from $Y$ if and only if $Z$ blocks \textbf{every} path from a node in $X$ to a node in $Y$
 \end{defn}
 
-\begin{thm}
-\textbf{Probabilistic implications of $d$-separation} Consequently, if $X$ and $Y$ are $d$-separated by $Z$ in a DAG $G$, then $(X \indep Y | Z)$ in every distribution compatible with $G$. Conversely, if $X$, $Y$, and $Z$ are \textit{not} $d$-separated by $Z$ in a DAG $G$ then $X$ and $Y$ are dependent conditional on $Z$ in almost all distributions compatible with $G$ (assuming no parameter fine-tuning).
+\begin{thm}[Probabilistic implications of $d$-separation]
+Consequently, if $X$ and $Y$ are $d$-separated by $Z$ in a DAG $G$, then $(X \indep Y | Z)$ in every distribution compatible with $G$. Conversely, if $X$, $Y$, and $Z$ are \textit{not} $d$-separated by $Z$ in a DAG $G$ then $X$ and $Y$ are dependent conditional on $Z$ in almost all distributions compatible with $G$ (assuming no parameter fine-tuning).
 \end{thm}
 
 \section{Functional causal models}
@@ -179,8 +191,8 @@ Given evidence $e=\{X_{obs}, Y_{obs}\}$, to compute probability of $Y=y$ under h
 \end{enumerate}
 
 \section{Causal Bayesian networks}
-\begin{defn}
-\textbf{Causal effect} Given two disjoint sets of variables $X$ and $Y$, the \textbf{causal effect} of $X$ on $Y$, denoted as $P(y|\hat{x})$ or $P(y|do(x))$, is the probability of $Y=y$ by deleting all equations from Eq.\eqref{eq:func-caus-mod} where variables $X$ are on the l.h.s., and substituting $X=x$ in the remaining equations. This corresponds to mutilating the DAG such that all arrows pointing directly to $X$ are removed. \textbf{Amputation is the difference between seeing and doing}.
+\begin{defn}[Causal effect]
+Given two disjoint sets of variables $X$ and $Y$, the \textbf{causal effect} of $X$ on $Y$, denoted as $P(y|\hat{x})$ or $P(y|do(x))$, is the probability of $Y=y$ by deleting all equations from Eq.\eqref{eq:func-caus-mod} where variables $X$ are on the l.h.s., and substituting $X=x$ in the remaining equations. This corresponds to mutilating the DAG such that all arrows pointing directly to $X$ are removed. \textbf{Amputation is the difference between seeing and doing}.
 \end{defn}
 
 For an atomic intervention, we get the \textit{truncated factorization} formula
@@ -201,18 +213,20 @@ P(x_1,...,x_n|x_i',pa_i)P(pa_i) \quad &\text{if}\ x_i = x_i'\\
 \end{equation}
 Marginalization of the above leads to the following theorem.
 
-\paragraph{Adjustment for direct causes} 
+\begin{thm}[Adjustment for direct causes]
 Let $PA_i$ denote the set of direct causes of variable $X_i$, and let $Y$ be any set of variables disjoint of $\{X_i \cup PA_i \}$. The causal effect of $do(X_i=x_i')$ on $Y$ is
 \begin{equation}
 P(y|\hat{x}_i') = \sum_{pa_i} P(y | x'_i, pa_i) P(pa_i)
 \end{equation}
 where $P(y|x_i', pa_i)$ and $P(pa_i)$ are preintervention probabilities. This is called ``adjusting for $PA_i$''.
-
+\end{thm}
 
 \paragraph{Identifiability}
 Causal quantities are defined relative to a causal model $M$, not the joint distribution $P_M(v)$ over the set of observed variables $V$. Non-experimental data provides information about $P_M(v)$ alone, and several graphs can give rise to the same $P_M(v)$. Thus, not all quantities are unambiguously \textbf{identifiable} from observational data, \textbf{even with infinite samples}. Added assumptions by specifying a particular $M$ can provide enough details to compute quantities of interest without explicating $M$ in full.
 
-Theorem 3.2.5: Given a causal diagram $G$ of any Markovian model in which a subset of variables $V$ are measured, the causal effect $P(y|\hat{x})$ is identifiable whenever $\{X \cup Y \cup PA_X\} \subseteq V$. I.e. \textit{all parents of the cause are necessary to estimate the causal effect}.
+\begin{thm}
+Given a causal diagram $G$ of any Markovian model in which a subset of variables $V$ are measured, the causal effect $P(y|\hat{x})$ is identifiable whenever $\{X \cup Y \cup PA_X\} \subseteq V$. I.e. \textit{all parents of the cause are necessary to estimate the causal effect}.
+\end{thm}
 
 \section{Inferring causal structure}
 \begin{itemize}
@@ -239,8 +253,7 @@ This criterion demonstrates how confounders that \textit{affect} the treatment v
 \label{Fig:front_door}
 \end{figure}
 
-\begin{defn}
-\textbf{Back-door criterion} A set of variables $Z$ satisfy the back-door criterion relative to an ordered pair of variables ($X_i$,$X_j$) in a DAG $G$ if:
+\begin{defn}[Back-door criterion] A set of variables $Z$ satisfy the back-door criterion relative to an ordered pair of variables ($X_i$,$X_j$) in a DAG $G$ if:
 \begin{enumerate}[noitemsep]
 \item no node in $Z$ is a descendant of $X_i$; and
 \item $Z$ blocks every path between $X_i$ and $X_j$ that contains an arrow into $X_i$
@@ -248,8 +261,7 @@ This criterion demonstrates how confounders that \textit{affect} the treatment v
 Similarly, if $X$ and $Y$ are two disjoint subsets of nodes in $G$, then $Z$ satisfies the back-door criterion relative to $(X,Y)$ if it satisfies the criterion relative to any pair $(X_i, X_j)$ such that $X_i \in X$ and $X_j \in Y$.
 \end{defn}
 
-\begin{thm}
-\textbf{Back-door adjustment}
+\begin{thm}[Back-door adjustment]
 If a set of variables $Z$ satisfies the back-door criterion relative to $(X,Y)$, then the causal effect of $X$ on $Y$ is identifiable and is given by
 \begin{equation}
 P(y|\hat{x}) = \sum_z P(y|x,z)P(z).
@@ -269,8 +281,8 @@ This criterion demonstrates how confounders that are \textit{affected by} the tr
 \label{Fig:front_door}
 \end{figure}
 
-\begin{defn}
-\textbf{Front-door} A set of variables $Z$ satisfy the front-door criterion relative to an ordered pair of variables $(X, Y)$ if:
+\begin{defn}[Front-door]
+A set of variables $Z$ satisfy the front-door criterion relative to an ordered pair of variables $(X, Y)$ if:
 \begin{enumerate}[noitemsep]
 \item $Z$ intercepts all directed paths from $X$ to $Y$; 
 \item there is no unblocked back-door path from $X$ to $Z$; and
@@ -278,8 +290,8 @@ This criterion demonstrates how confounders that are \textit{affected by} the tr
 \end{enumerate}
 \end{defn}
 
-\begin{thm}
-\textbf{Front-door adjustment} If $Z$ satisfies the front-door criterion relative to $(X, Y)$ and if $P(x, z) > 0$, then the causal effect of $X$ on $Y$ is identifiable and is given by
+\begin{thm}[Front-door adjustment]
+If $Z$ satisfies the front-door criterion relative to $(X, Y)$ and if $P(x, z) > 0$, then the causal effect of $X$ on $Y$ is identifiable and is given by
 \begin{equation}
 P(y|\hat{x}) = \sum_z P(z|x) \sum_{x'} P(y|x',z)P(x')
 \end{equation}
@@ -301,29 +313,26 @@ The back-door and front-door criteria do not provide a complete set of rules for
 
 \subsection{Rules} \label{sec:Rules}
 
-\begin{thm}
-\textbf{Rule 1} Insertion/deletion of observations: \label{thm:do-calc-ins-del-obs}
+\begin{thm}[Rule 1: Insertion/deletion of observations] 
 \begin{equation}
 P(y|\hat{x}, z, w) = P(y| \hat{x}, w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X}}}}.
-\end{equation}
+\end{equation} \label{thm:do-calc-ins-del-obs}
 \end{thm}
 
 Theorem~\ref{thm:do-calc-ins-del-obs} is a reaffirmation of $d$-separation (Section~\ref{sec:blocking}) as a valid test for conditional independence in the distribution resulting from $do(X=x)$. The rule follows from the fact that deleting equations from the system ($G_{{\overline{X}}}$) does not introduce any dependencies among the remaining disturbance terms.
 
-\begin{thm}
-\textbf{Rule 2} Action/observation exchange: \label{thm:do-calc-act-obs-ex}
+\begin{thm}[Rule 2: Action/observation exchange]
 \begin{equation}
 P(y|\hat{x},\hat{z},w) = P(y|\hat{x},z,w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X}\underline{Z}}}}.
-\end{equation}
+\end{equation}  \label{thm:do-calc-act-obs-ex}
 \end{thm}
 
 Theorem~/ref{thm:do-calc-act-obs-ex} provides a condition for an external intervention $do(Z=z)$ to have the same effect on $Y$ as the passive observation $Z=z$. The condition amounts to $\{X \cup W\}$ blocking all back-door paths from $Z$ to $Y$ (in $G_{\overline{X}}$), since $G_{\overline{X}\underline{Z}}$ retains all (and only) such paths.
 
-\begin{thm}
-\textbf{Rule 3} Insertion/deletion of actions:  \label{thm:do-calc-ins-del-act}
+\begin{thm}[Rule 3: Insertion/deletion of actions] 
 \begin{equation}
 P(y|\hat{x},\hat{z},w) = P(y|\hat{x},w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X},\overline{Z(W)}}}}
-\end{equation}
+\end{equation}  \label{thm:do-calc-ins-del-act}
 where $Z(W)$ is the set of $Z$-nodes that are not ancestors of any $W$-node in $G_{\overline{X}}$.
 \end{thm}
 
@@ -392,8 +401,8 @@ We are interested in settings where we have gathered data $\mathcal{D}=\{X,Z,Y\}
 
 Let control variables be ordered $X=X_1,...,X_n$ such that every $X_k$ is a non-descendant of $X_{k+j}$ ($j>0$) and let the outcome $Y$ be a descendant of $X_n$. A \textbf{plan} is an ordered sequence $(\hat{x}_1,...,\hat{x}_n)$ of value assignments to the control variables. A \textbf{conditional plan} is an ordered sequence $(\hat{g}_1(z_1),...,\hat{g}_n(z_n))$ where $\hat{g}_k(z_k)$ means ``set $X_k$ to $\hat{g}_k(z_k)$ whenever $Z_k=z_k$'', where the support $Z_k$ of each $g_k(z_k)$ must not contain any variables that descendants of $X_k$.
 
-\begin{thm}
-\textbf{Plan identification: the sequential back-door criterion}. The probability of the \textbf{unconditional} plan $P(y|\hat{x_1}, ..., \hat{x}_n)$ is identifiable if, for every $1 \leq k \leq n$ there exists a set $Z_k$ of covariates satisfying the following conditions:
+\begin{thm}[Plan identification: the sequential back-door criterion]
+The probability of the \textbf{unconditional} plan $P(y|\hat{x_1}, ..., \hat{x}_n)$ is identifiable if, for every $1 \leq k \leq n$ there exists a set $Z_k$ of covariates satisfying the following conditions:
 \begin{equation}
 Z_k \subseteq N_k
 \end{equation}
@@ -411,8 +420,8 @@ P(y|\hat{x}_1,...,\hat{x}_n) = \sum_{z_1,...,z_n} P(y|z_1,...,z_n,x_1,...,x_n) \
 
 We are often concerned with the extent to which a variable affects another directly, rather than the total causal effect mediated through all other intervening variables. For example, in cases of sex discrimination, we may be interested in asking the direct effect of an applicant's sex on the outcome of an applicant's job application. In effect, we are concerned with the causal effect of variable $X$ on $Y$ while all other factors in the analysis are held fixed (\textit{Ceteris paribus}).
 
-\begin{defn}
-\textbf{Direct effect}. The direct effect of $X$ on $Y$ is given by $P(y|\hat{x},\hat{s}_{XY})$ where $\hat{s}_{XY}$ is the set of all variables in the model except $X$ and $Y$
+\begin{defn}[Direct effect]
+The direct effect of $X$ on $Y$ is given by $P(y|\hat{x},\hat{s}_{XY})$ where $\hat{s}_{XY}$ is the set of all variables in the model except $X$ and $Y$
 \end{defn}
 
 \begin{cor}
@@ -421,8 +430,8 @@ The direct effect of $X$ on $Y$ is given by $P(y|\hat{x}, \hat{pa}_{Y \setminus 
 
 It is sometimes meaningful to average the direct effect over all levels of $pa_{Y\setminus X}$. To do this, we define the natural direct effect:
 
-\begin{defn}
-\textbf{Natural direct effect}. The natural direct effect ($DE_{x,x'}(Y)$) is defined as
+\begin{defn}[Natural direct effect]
+The natural direct effect ($DE_{x,x'}(Y)$) is defined as
 \begin{equation}
 DE_{x,x'}(Y) \defeq E[Y(x', Z(x)) - E(Y(x))]
 \end{equation}
@@ -437,23 +446,23 @@ DE_{x,x'}(Y) = \sum_z [E(Y|do(x', z)) - E(Y| do(x,z))]P(z|do(x))
 which is simply a weighted average of controlled direct effects. 
 
 We can also define the indirect effect which quantifies the influence of $X$ on $Y$ through all paths except for the direct path from $X \rightarrow Y$.
-\begin{defn}
-\textbf{Indirect effect}. The natural indirect effect ($IE_{x,x'}(Y)$) is defined as
+\begin{defn}[Indirect effect]
+The natural indirect effect ($IE_{x,x'}(Y)$) is defined as
 \begin{equation}
 IE_{x,x'}(Y) = E[Y(x, Z(x')) - E(Y(x))]
 \end{equation}
 \end{defn}
 We can define 
-\begin{defn}
-\textbf{Total effect}. The total effect of $X$ on $Y$ is given by $P(y|do(x))$, namely, the distribution of $Y$ while $X$ is held constant at $x$ and all other variables are permitted to run their natural course.  \textbf{Confusingly}, we also sometimes denote the total effect $TE_{x,x'}(Y)$ as 
+\begin{defn}[Total effect] 
+The total effect of $X$ on $Y$ is given by $P(y|do(x))$, namely, the distribution of $Y$ while $X$ is held constant at $x$ and all other variables are permitted to run their natural course.  \textbf{Confusingly}, we also sometimes denote the total effect $TE_{x,x'}(Y)$ as 
 \begin{equation}
 TE_{x,x'}(Y) \defeq E[Y(x') - E(Y(x))] 
 \end{equation}
-\textbf{TODO: Write $TE_{x,x'}(Y)$ in terms of $P(y|do(x))$?}
+\textbf{TODO: Write $TE_{x,x'}(Y)$ in terms of $P(y|do(x))$? Is it $E(y|do(x')) - E(y|do(x))$?}
 \end{defn}
 
-\begin{thm}
-\textbf{Relationship between total effect, direct effect, and indirect effect} The total effect of a transition is the \textit{difference} between the direct effect of that transition and the indirect effect of the reverse transition
+\begin{thm}[Relationship between total effect, direct effect, and indirect effect]
+The total effect of a transition is the \textit{difference} between the direct effect of that transition and the indirect effect of the reverse transition
 \begin{equation}
 TE_{x,x'}(Y) = DE_{x,x'}(Y) - IE_{x',x}(Y)
 \end{equation}
@@ -471,8 +480,8 @@ In general, for the \textbf{partial correlation} $\rho_{XY\cdot Z}$,
 \end{equation}
 and therefore, in \textbf{any} Markovian model with DAG $G$, the partial correlation $\rho_{XY\cdot Z}$ vanishes whenever the nodes corresponding to the variables in $Z$ $d$-separate node $X$ from node $Y$ in $G$, regardless of model parameters. Moreover, no other partial correlation vanishes, for all model parameters. \textbf{[Q: Not sure if this is general or only for linear models]}
 
-\begin{thm}
-\textbf{Test for correlation between error terms} For any two non-adjacent variables $X$ and $Y$, where $Y$ is \textbf{not} a parent of $X$, a sufficient test of whether $\epsilon_X$ and $\epsilon_Y$ are uncorrelated is if the following equality holds:
+\begin{thm}[Test for correlation between error terms]
+For any two non-adjacent variables $X$ and $Y$, where $Y$ is \textbf{not} a parent of $X$, a sufficient test of whether $\epsilon_X$ and $\epsilon_Y$ are uncorrelated is if the following equality holds:
 \begin{equation}
 E[Y|x,do(S_{XY})] = E[Y|do(x),do(S_{XY})] \label{eq:test-corr-error}
 \end{equation}
@@ -491,16 +500,17 @@ Note that \textbf{selection bias} can arise when two uncorrelated factors have a
 
 \subsection{Exogeneity and instrumental variables}
 
-\begin{defn}
-\textbf{General Exogeneity} Let $X$ and $Y$ be two sets of variables, and let $\lambda$ be any quantity which may be computed from a structural model $M$ (structural, statistical, etc.) in a theory $T$. We say that $X$ is exogenous relative to $(Y, \lambda ,T)$ if $\lambda$ is identifiable from the conditional distribution of $P(y|x)$, that is, if
+\begin{defn}[General Exogeneity]
+Let $X$ and $Y$ be two sets of variables, and let $\lambda$ be any quantity which may be computed from a structural model $M$ (structural, statistical, etc.) in a theory $T$. We say that $X$ is exogenous relative to $(Y, \lambda ,T)$ if $\lambda$ is identifiable from the conditional distribution of $P(y|x)$, that is, if
 \begin{equation}
 P_{M_1}(y|x) = P_{M_2}(y|x) \implies \lambda(M_1) = \lambda(M_2)
 \end{equation}
-for any two models $M_1$ and $M_2$ satisfying theory $T$. 
+for any two models $M_1$ and $M_2$ satisfying theory $T$. \label{def:general-exog}
 \end{defn}
 
-\begin{defn}
-\textbf{Instrumental variable} For the parameter $\lambda = P(w|do(z))$ where $W$ and $Z$ are two sets of variables in $Y$, then if $X$ is exogenous relative to $(Y, \lambda, T)$ then
+
+\begin{defn}[Instrumental variable]
+For the parameter $\lambda = P(w|do(z))$ where $W$ and $Z$ are two sets of variables in $Y$, then if $X$ is exogenous relative to $(Y, \lambda, T)$ then
 \begin{equation}
 P_{M_1}(z,w|x) = P_{M_2}(z,w|x) \implies P_{M_1}(w|do(z)) = P_{M_2}(w|do(z)).
 \end{equation}
@@ -512,8 +522,8 @@ If $X$ is an instrumental variable for $P(w|do(z))$, then $P(w|do(z))$ is identi
 \end{cor}
 
 An alternative definition of exogeneity may also be given, in terms of the correlation between errors and variables:
-\begin{defn}
-\textbf{Error-based exogeneity} A variable $X$ is exogenous relative to $\lambda=P(y|do(x))$ if $X$ is independent of all errors $\epsilon$ that influence $Y$, except those mediated by $X$. 
+\begin{defn}[Error-based exogeneity]
+A variable $X$ is exogenous relative to $\lambda=P(y|do(x))$ if $X$ is independent of all errors $\epsilon$ that influence $Y$, except those mediated by $X$. 
 \end{defn}
 
 \subsection{Linear structural equation models}
@@ -534,8 +544,8 @@ then $X_i$ will also be multivariate normal, and the SEM will be entirely determ
 
 \subsubsection{Interpretation}
 
-\begin{defn}
-\textbf{Structural equations} An equation 
+\begin{defn}[Structural equations]
+An equation 
 \begin{equation}
 y=\beta x + \epsilon \label{eq:linear-struct}
 \end{equation}
@@ -579,14 +589,14 @@ is
 \alpha=r_{YX\cdot Z_1Z_2...Z_k}
 \end{equation}
 
-\begin{thm}
-\textbf{$d$-Separation in General Linear Models} For any linear model Eq.\eqref{eq:linear_sem}, which may include cycles and bidirected arcs (i.e. dependent $\epsilon$ between different variables), $\rho_{XY\cdot Z}=0$ if $Z$ d-separates $X$ from $Y$, where bidirected arcs between $i$ and $j$ are interpreted as a latent common parent $i \leftarrow L \rightarrow j$. \label{thm:d-sep-lin-model}
+\begin{thm}[$d$-Separation in General Linear Models]
+For any linear model Eq.\eqref{eq:linear_sem}, which may include cycles and bidirected arcs (i.e. dependent $\epsilon$ between different variables), $\rho_{XY\cdot Z}=0$ if $Z$ d-separates $X$ from $Y$, where bidirected arcs between $i$ and $j$ are interpreted as a latent common parent $i \leftarrow L \rightarrow j$. \label{thm:d-sep-lin-model}
 \end{thm}
 
 Theorem \ref{thm:d-sep-lin-model} provides a method for finding models in the context of linear SEMs: by searching over all $\rho_{XY\cdot Z}$, we can construct a DAG. Not all partial correlations need to be searched.
 
-\begin{defn}
-\textbf{Basis} Let $S$ be a set of partial correlations. A basis $B$ for $S$ is a set of zero partial correlations where (i) $B$ implies the zero of every element of $S$ and (ii) no proper subset of $B$ sustains such an implication.
+\begin{defn}[Basis]
+Let $S$ be a set of partial correlations. A basis $B$ for $S$ is a set of zero partial correlations where (i) $B$ implies the zero of every element of $S$ and (ii) no proper subset of $B$ sustains such an implication.
 \end{defn}
 
 An obvious choice of basis for a DAG $D$ is
@@ -595,8 +605,8 @@ B = \{\rho_{ij\cdot pa_{i}} | i>j \}
 \end{equation}
 where $i$ ranges over all nodes in $D$ and $j$ ranges over all predecessors of $i$ in any order that agrees with the arrows of $D$. More economical choice of basis exist, such as a Graphical Basis. 
 
-\begin{thm}
-\textbf{Markov linear-normal equivalence} Two Markovian linear-normal models are observationally indistinguishable if every covariance matrix generated by one model can be parametrically generated by the other (covariance equivalent). Two such models are covariance equivalent if and only if their corresponding graphs have the same sets of zero partial correlations. Moreover, two such models are covariance equivalent if and only if they have the same edges and the same sets of $v$-structures. (I.e. arrows can be reversed as long as they do not alter $v$-structures)
+\begin{thm}[Markov linear-normal equivalence]
+Two Markovian linear-normal models are observationally indistinguishable if every covariance matrix generated by one model can be parametrically generated by the other (covariance equivalent). Two such models are covariance equivalent if and only if their corresponding graphs have the same sets of zero partial correlations. Moreover, two such models are covariance equivalent if and only if they have the same edges and the same sets of $v$-structures. (I.e. arrows can be reversed as long as they do not alter $v$-structures)
 \end{thm}
 
 \subsubsection{Parameter identifiability}
@@ -606,12 +616,12 @@ Consider an edge $X \rightarrow Y$ in graph $G$, and let $\alpha$ be the path co
 r_{YX} = \alpha + I_{YX}
 \end{equation}
 where $I_{YX}$ is independent of $\alpha$, since $I_{YX}$ is composed of other indirect paths connecting $X$ and $Y$. If we remove the edge $X \rightarrow Y$ and observe that the resulting subgraph entails zero correlation between $X$ and $Y$ then $I_{XY}=0$ and $r_{YX}=\alpha$, and hence $\alpha$ is identified. This idea is extended in the following theorem
-\begin{thm}
-\textbf{Single-door Criterion for Direct Effects} Let $G$ be any path diagram in which $\alpha$ is the path coefficient associated with link $X \rightarrow Y$, and let $G_\alpha$ denote the diagram that results when $X\rightarrow Y$ is deleted from $G$. The coefficient $\alpha$ is identifiable if there exists a set of variables $Z$ such that (i) $Z$ contains no descendant of $Y$ and (ii) $Z$ d-separates $X$ from $Y$ in $G_\alpha$. If $Z$ satisfies these two conditions then, in a linear SEM, $\alpha = r_{YX\cdot Z}$. Conversely, if $Z$ does not satisfy these conditions, then $r_{YX\cdot Z}$ is not a consistent estimand of $\alpha$. \label{thm:single-door-direct-effect}
+\begin{thm}[Single-door Criterion for Direct Effects] 
+Let $G$ be any path diagram in which $\alpha$ is the path coefficient associated with link $X \rightarrow Y$, and let $G_\alpha$ denote the diagram that results when $X\rightarrow Y$ is deleted from $G$. The coefficient $\alpha$ is identifiable if there exists a set of variables $Z$ such that (i) $Z$ contains no descendant of $Y$ and (ii) $Z$ d-separates $X$ from $Y$ in $G_\alpha$. If $Z$ satisfies these two conditions then, in a linear SEM, $\alpha = r_{YX\cdot Z}$. Conversely, if $Z$ does not satisfy these conditions, then $r_{YX\cdot Z}$ is not a consistent estimand of $\alpha$. \label{thm:single-door-direct-effect}
 \end{thm}
 
-\begin{thm}
-\textbf{Back-door Criterion for Total Effects} For any two variables in a causal diagram $G$, the total effect of $X$ on $Y$ is identifiable if there exists a set of measurements $Z$ such that 
+\begin{thm}[Back-door Criterion for Total Effects]
+For any two variables in a causal diagram $G$, the total effect of $X$ on $Y$ is identifiable if there exists a set of measurements $Z$ such that 
 \begin{enumerate}
 \item no member of $Z$ is a descendant of $X$; and
 \item $Z$ d-separates $X$ from $Y$ in the subgraph $G_{\underline{X}}$ formed by deleting all $G$ arrows emanating from $X$
@@ -639,12 +649,12 @@ P(X|\hat{x}) &= r_{YX} = \beta \\
 \textbf{[TODO PROVE: ]} In a linear SEM, to evaluate the partial effect of $X$ on $Y$ along a single path, take the product of all path coefficients for each edge for all observed variables in the model. To evaluate the total effect for multiple branches, sum the partial effects across each branch (consisting of endogenous edges). 
 
 
-\section{Simpson's paradox}
+\section{Simpson's paradox, confounding, and collapsibility}
 
 Simpson's paradox is a reversal effect observed in sub-populations.
 
-\begin{defn}
-\textbf{Simpson's paradox} The phenomenon whereby an event $C$ increases the probability of $E$ in a given population $p$ and, at the same time, decreases the probability of $E$ in every sub-population of $p$. In other words, if $F$ and $\neg F$ are two complementary properties describing two sub-populations, then it is possible to encounter the equalities:
+\begin{defn}[Simpson's paradox]
+The phenomenon whereby an event $C$ increases the probability of $E$ in a given population $p$ and, at the same time, decreases the probability of $E$ in every sub-population of $p$. In other words, if $F$ and $\neg F$ are two complementary properties describing two sub-populations, then it is possible to encounter the equalities:
 \begin{align}
 P(E|C) &> P(E|\neg C) \\
 P(E|C,F) &< P(E| \neg C, F) \nonumber \\
@@ -664,8 +674,8 @@ Note: Simpson's paradox is not strictly a paradox because it does not involve an
 
 An example dataset displaying Simpson's paradox is in Fig.~\ref{Fig:simpson} for a drug treatment ($C$), recovery ($E$), for sub-populations of gender ($F$). The question, therefore, is: "what is the total effect of the drug on recovery?". The solution to this question depends on the causal assumptions we bring to bear on the problem: two different causal models which are capable of generating the data yield different answers for the quantity $P(E|do(C))$, one of which averages over the subpopulations, and the other using pooled data. 
 
-\begin{thm}
-\textbf{Sure-thing Principle} An action $C$ that increases the probability of an event $E$ in each sub-population $F$ must also increase the probability of $E$ in the population as a whole, provided that the action does not change the distribution of the sub-populations. In other words, for dichotomous sub-populations $F$, if  \label{thm:sure-thing}
+\begin{thm}[Sure-thing Principle]
+An action $C$ that increases the probability of an event $E$ in each sub-population $F$ must also increase the probability of $E$ in the population as a whole, provided that the action does not change the distribution of the sub-populations. In other words, for dichotomous sub-populations $F$, if  \label{thm:sure-thing}
 \begin{align}
 P(E|do(C), F) &< P(E|do(\neg C), F) \\
 P(E|do(C), \neg F) &< P(E|do(\neg C), \neg F) \nonumber
@@ -677,6 +687,16 @@ P(E|do(C)) < P(E|do(\neg C))
 \end{thm}
 
 Theorem~\ref{thm:sure-thing} follows from do-calculus, and gives the intuitive result that if the drug in Fig.~\ref{Fig:simpson}A harms both men and women then one should not administer the drug if one does not know the patient's gender, despite the fact that the observational conditional densities obey $P(E|C)>P(E|\neg C)$. The ``paradox'' in the example arises because the males, who recover (regardless of the drug) more often than the females, are also more likely than the females to use the drug.
+
+\begin{defn}[No confounding]
+Variables $X$ and $Y$ are not confounded in a causal model $M$ if and only if
+\begin{equation}
+P(y|do(x)) = P(y|x),\ \text{or}\ P(x|do(y)) = P(x|y)
+\end{equation}
+for all $x$ and $y$ in their respective domains. If this condition holds, we say $P(x|y)$ is unbiased. 
+\end{defn}
+
+Note that no confounding is a special case of exogeneity under a theory $T$ of the set of all models with a given DAG (see Definition~\ref{def:general-exog}).
 
 \newpage
 \bibliography{causality.bib} 
