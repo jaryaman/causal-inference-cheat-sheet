@@ -239,7 +239,7 @@ Given a causal diagram $G$ of any Markovian model in which a subset of variables
 
 \section{Adjusting for confounding bias}
 
-When seeking to evaluate the effect of one factor ($X$) on another ($Y$), we should ask \textbf{whether} we should \textit{adjust} for possible variations in other factors ($Z$, known as ``covariates'', ``concomitants'' or ``confounders''). This becomes apparent in \textbf{Simpson's paradox}: any statistical relationship between two variables may be reversed by including additional factors in the analysis.
+When seeking to evaluate the effect of one factor ($X$) on another ($Y$), we should ask \textbf{whether} we should \textit{adjust} for possible variations in other factors ($Z$, known as ``covariates'', ``concomitants'' or ``confounders''). This becomes apparent in \textbf{Simpson's paradox}: any statistical relationship between two variables may be reversed by including additional factors in the analysis (see Section~\ref{sec:simpson-confounding-collapsibility}).
 
 \subsection{The back-door criterion}
 This criterion demonstrates how confounders that \textit{affect} the treatment variable can be used to facilitate causal inference.
@@ -327,7 +327,7 @@ P(y|\hat{x},\hat{z},w) = P(y|\hat{x},z,w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{
 \end{equation}  \label{thm:do-calc-act-obs-ex}
 \end{thm}
 
-Theorem~/ref{thm:do-calc-act-obs-ex} provides a condition for an external intervention $do(Z=z)$ to have the same effect on $Y$ as the passive observation $Z=z$. The condition amounts to $\{X \cup W\}$ blocking all back-door paths from $Z$ to $Y$ (in $G_{\overline{X}}$), since $G_{\overline{X}\underline{Z}}$ retains all (and only) such paths.
+Theorem~\ref{thm:do-calc-act-obs-ex} provides a condition for an external intervention $do(Z=z)$ to have the same effect on $Y$ as the passive observation $Z=z$. The condition amounts to $\{X \cup W\}$ blocking all back-door paths from $Z$ to $Y$ (in $G_{\overline{X}}$), since $G_{\overline{X}\underline{Z}}$ retains all (and only) such paths.
 
 \begin{thm}[Rule 3: Insertion/deletion of actions] 
 \begin{equation}
@@ -341,7 +341,7 @@ Theorem~\ref{thm:do-calc-ins-del-act} provides conditions for introducing (or de
 \paragraph{Completeness} A quantity $Q=P(y|do(x),z)$ is identifiable if and only if it can be reduced to a \textit{do}-free expression using the above 3 rules.
 
 \subsection{Identifiability}
-A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules in Section~\ref{sec:Rules} that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. Figure \ref{Fig:graph_cond_ci} provides a set of graphical conditions; if any one is satisfied then $P(y|\hat{x})$ is identifiable, and satisfying at least one of the conditions is necessary for $P(y|\hat{x})$ to be identifiable. I.e. $P(y|\hat{x})$ is unidentifiable then no finite sequence of inference rules reduces $P(y|\hat{x})$ to a hat-free expression. Figure \ref{Fig:graph_cond_ci} can also be used to define an algorithm for deriving a closed-form expression for control queries in terms of observable quantities, an implementation in \texttt{R} is in the package \texttt{causaleffect}, see \cite{tikka17} and a Jupyter Notebook example \href{https://github.com/jaryaman/ML_demos/blob/master/Notebooks/do-calculus.ipynb}{here}.
+A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules in Section~\ref{sec:Rules} that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. Figure \ref{Fig:graph_cond_ci} provides a set of graphical conditions; if any one is satisfied then $P(y|\hat{x})$ is identifiable, and satisfying at least one of the conditions is necessary for $P(y|\hat{x})$ to be identifiable. I.e. $P(y|\hat{x})$ is unidentifiable then no finite sequence of inference rules reduces $P(y|\hat{x})$ to a hat-free expression. Figure \ref{Fig:graph_cond_ci} can also be used to define an algorithm for deriving a closed-form expression for control queries in terms of observable quantities, see Section~\ref{sec:soft-causaleffect} for an implementation.
 
 
 \begin{figure}
@@ -357,8 +357,11 @@ A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identif
 \begin{itemize}
 \item Whilst a causal effect is not identifiable for \textit{every} joint distribution of variables if this condition is broken, it might be for \textit{some} probability densities. For example, an instrumental variable can yield a causal effect identifiable in a linear model in the the presence of a bow pattern (Fig.~3.7A of Causality), but will not be generally identifiable (see Section 3.5 of Causality).
 \item If $P(y|\hat{x})$ is identifiable, then if a set of nodes $Z$ lies on a directed path from $X$ to $Y$, then $P(z|\hat{x})$ is also identifiable (lemma 4.3.4).
-\item \textbf{Complete identifiability condition} A sufficient condition for identifying the causal effect $P(y|do(x))$ is that there exists no bi-directed path (i.e.\ a path composed entirely of bi-directed arcs, see Fig.~\ref{Fig:front_door}) between $X$ and any of its children. Prior to applying this criterion, all nodes which are not ancestors of $Y$ are deleted from the graph (i.e.\ only consider nodes which are on pathways from $X$ to $Y$).
 \end{itemize}
+
+\begin{thm}[Complete identifiability condition]
+A sufficient condition for identifying the causal effect $P(y|do(x))$ is that there exists no bi-directed path (i.e.\ a path composed entirely of bi-directed arcs, see Fig.~\ref{Fig:front_door}) between $X$ and any of its children \citep{Tian02}. Prior to applying this criterion, all nodes which are not ancestors of $Y$ are deleted from the graph (i.e.\ only consider nodes which are on pathways from $X$ to $Y$).
+\end{thm}
 
 \section{Actions, plans, and direct effects}
 
@@ -649,7 +652,7 @@ P(X|\hat{x}) &= r_{YX} = \beta \\
 \textbf{[TODO PROVE: ]} In a linear SEM, to evaluate the partial effect of $X$ on $Y$ along a single path, take the product of all path coefficients for each edge for all observed variables in the model. To evaluate the total effect for multiple branches, sum the partial effects across each branch (consisting of endogenous edges). 
 
 
-\section{Simpson's paradox, confounding, and collapsibility}
+\section{Simpson's paradox, confounding, and collapsibility} \label{sec:simpson-confounding-collapsibility}
 
 Simpson's paradox is a reversal effect observed in sub-populations.
 
@@ -697,6 +700,24 @@ for all $x$ and $y$ in their respective domains. If this condition holds, we say
 \end{defn}
 
 Note that no confounding is a special case of exogeneity under a theory $T$ of the set of all models with a given DAG (see Definition~\ref{def:general-exog}).
+
+\section{Software}
+
+\subsection{Tetrad}
+\begin{itemize}[noitemsep]
+\item Allows you to build causal graphs, a variety of parametric models (Bayesian causal graphs, SEMs,...), instantiate them with particular parametrizations
+\item Allows you to do model search, given data. Can be combined to create a ground truth, simulate, then do inference, all inside the same environment
+\item Implemented as a Java GUI
+\item Available for download \href{https://www.ccd.pitt.edu/tools/}{here} 
+\item Manual here \href{http://cmu-phil.github.io/tetrad/manual/}{here}
+\end{itemize}
+
+\subsection{\texttt{causaleffect}} \label{sec:soft-causaleffect}
+\begin{itemize}[noitemsep]
+\item Build causal graphs, and perform do-calculus to identify causal effects in terms of observational densities \cite{tikka17}
+\item Implemented in an \texttt{R} package, \texttt{causaleffect}
+\item Jupyter Notebook example \href{https://github.com/jaryaman/ML_demos/blob/master/Notebooks/do-calculus.ipynb}{here}
+\end{itemize}
 
 \newpage
 \bibliography{causality.bib} 
