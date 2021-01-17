@@ -225,7 +225,7 @@ where $P(y|x_i', pa_i)$ and $P(pa_i)$ are preintervention probabilities. This is
 Causal quantities are defined relative to a causal model $M$, not the joint distribution $P_M(v)$ over the set of observed variables $V$. Non-experimental data provides information about $P_M(v)$ alone, and several graphs can give rise to the same $P_M(v)$. Thus, not all quantities are unambiguously \textbf{identifiable} from observational data, \textbf{even with infinite samples}. Added assumptions by specifying a particular $M$ can provide enough details to compute quantities of interest without explicating $M$ in full.
 
 \begin{thm}
-Given a causal diagram $G$ of any Markovian model in which a subset of variables $V$ are measured, the causal effect $P(y|\hat{x})$ is identifiable whenever $\{X \cup Y \cup PA_X\} \subseteq V$. I.e. \textit{all parents of the cause are necessary to estimate the causal effect}.
+Given a causal diagram $G$ of any Markovian model in which a subset of variables $V$ are measured, the causal effect $P(y|\hat{x})$ is identifiable whenever $\{X \cup Y \cup PA_X\} \subseteq V$. I.e. \textit{when all parents of the cause are measured, the causal effect can be identified}.
 \end{thm}
 
 \section{Inferring causal structure}
@@ -341,7 +341,7 @@ Theorem~\ref{thm:do-calc-ins-del-act} provides conditions for introducing (or de
 \paragraph{Completeness} A quantity $Q=P(y|do(x),z)$ is identifiable if and only if it can be reduced to a \textit{do}-free expression using the above 3 rules.
 
 \subsection{Identifiability}
-A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ is there exists a finite sequence of transformations conforming to one of the three rules in Section~\ref{sec:Rules} that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. Figure \ref{Fig:graph_cond_ci} provides a set of graphical conditions; if any one is satisfied then $P(y|\hat{x})$ is identifiable, and satisfying at least one of the conditions is necessary for $P(y|\hat{x})$ to be identifiable. I.e. $P(y|\hat{x})$ is unidentifiable then no finite sequence of inference rules reduces $P(y|\hat{x})$ to a hat-free expression. Figure \ref{Fig:graph_cond_ci} can also be used to define an algorithm for deriving a closed-form expression for control queries in terms of observable quantities, see Section~\ref{sec:soft-causaleffect} for an implementation.
+A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identifiable in a model characterised by a graph $G$ if there exists a finite sequence of transformations conforming to one of the three rules in Section~\ref{sec:Rules} that reduces $q$ into a standard (i.e.\ ``hat''-free) probability expression involving observed quantities. Figure \ref{Fig:graph_cond_ci} provides a set of graphical conditions; if any one is satisfied then $P(y|\hat{x})$ is identifiable, and satisfying at least one of the conditions is necessary for $P(y|\hat{x})$ to be identifiable. I.e. $P(y|\hat{x})$ is unidentifiable then no finite sequence of inference rules reduces $P(y|\hat{x})$ to a hat-free expression. Figure \ref{Fig:graph_cond_ci} can also be used to define an algorithm for deriving a closed-form expression for control queries in terms of observable quantities, see Section~\ref{sec:soft-causaleffect} for an implementation.
 
 
 \begin{figure}
@@ -359,16 +359,16 @@ A causal effect $q = P(y_1, \dots, y_k| \hat{x}_1, \dots, \hat{x}_m)$ is identif
 \item If $P(y|\hat{x})$ is identifiable, then if a set of nodes $Z$ lies on a directed path from $X$ to $Y$, then $P(z|\hat{x})$ is also identifiable (lemma 4.3.4).
 \end{itemize}
 
-\begin{thm}[$d$-separation equivalence] \label{thm:d-sep-equiv-thm}
+\begin{defn}[$d$-separation equivalence] \label{defn:d-sep-equiv}
 For two nodes $a$ and $b$ in a causal diagram $M$, we write $a \underset{M}{\text{---}} b$ if $a$ and $b$ are adjacent in model $M$. We write conditional adjacency $a \underset{M}{\text{---}} b | c$ to mean once given $c$, $a$ and $b$ cannot be independent: graphically, $a$ and $b$ are the common parents of $c$, or some ancestor of $c$, or $a$ and $b$ are unconditionally adjacent.  Two causal models $D$ and $E$ over the set of nodes $N$, are d-separation equivalent if \citep{Verma88}:
 \begin{align}
 \underset{a,b \in N}{\forall} a \underset{D}{\text{---}} b &\iff a \underset{E}{\text{---}} b \\
 \underset{a,b \in N}{\forall} a \underset{D}{\text{---}} b | c &\iff a \underset{E}{\text{---}} b | c
 \end{align}
-\end{thm}
+\end{defn}
 
-\begin{cor}
-If models $D$ and $E$ are $d$-separation equivalent (see Theorem~\ref{thm:d-sep-equiv-thm}), then they are observationally equivalent: i.e. they are indistinguishable. 
+\begin{cor}\label{cor:d-sep-equiv-thm}
+If models $D$ and $E$ are $d$-separation equivalent (see Definition~\ref{defn:d-sep-equiv}), then they are observationally equivalent: i.e. they are unidentifiable from each other. 
 \end{cor}
 
 \begin{thm}[Complete identifiability condition]
@@ -621,7 +621,7 @@ B = \{\rho_{ij\cdot pa_{i}} | i>j \}
 where $i$ ranges over all nodes in $D$ and $j$ ranges over all predecessors of $i$ in any order that agrees with the arrows of $D$. More economical choice of basis exist, such as a Graphical Basis. 
 
 \begin{thm}[Markov linear-normal equivalence]
-Two Markovian linear-normal models are observationally indistinguishable if every covariance matrix generated by one model can be parametrically generated by the other (covariance equivalent). Two such models are covariance equivalent if and only if their corresponding graphs have the same sets of zero partial correlations. Moreover, two such models are covariance equivalent if and only if they have the same edges and the same sets of $v$-structures. (I.e. arrows can be reversed as long as they do not alter $v$-structures, see Theorem~\ref{thm:d-sep-equiv-thm}).
+Two Markovian linear-normal models are observationally indistinguishable if every covariance matrix generated by one model can be parametrically generated by the other (covariance equivalent). Two such models are covariance equivalent if and only if their corresponding graphs have the same sets of zero partial correlations. Moreover, two such models are covariance equivalent if and only if they have the same edges and the same sets of $v$-structures. (I.e. arrows can be reversed as long as they do not alter $v$-structures, see Corollary~\ref{cor:d-sep-equiv-thm}).
 \end{thm}
 
 \subsubsection{Parameter identifiability}
