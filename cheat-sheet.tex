@@ -380,7 +380,7 @@ A sufficient condition for identifying the causal effect $P(y|do(x))$ is that th
 
 \subsection{Confounders, latent common causes, and bi-directed arcs}
 
-Bi-directed arcs are, by definition, equivalent to a latent common cause between the two connecting variables (see Fig.~\ref{Fig:confounders}). This notation is useful because it is the only triad with a single latent variable where the latent common cause renders the causal effect unidentifiable. In Fig.~\ref{Fig:confounders}B, even if $U$ were available, conditioning upon it would induce collider bias. In Fig.~\ref{Fig:confounders}C, it is intuitive that $U$ is unnecessary to be known, because all causal effects are mediated by a very large number of unobserved causes, but we do not need complete knowledge of the world to make causal inferences.
+Bi-directed arcs are, by definition, equivalent to a latent common cause (also known as a confounder) between the two connecting variables (see Fig.~\ref{Fig:confounders}). This notation is useful because it is the only triad with a single latent variable where the latent common cause renders the causal effect unidentifiable. In Fig.~\ref{Fig:confounders}B, even if $U$ were available, conditioning upon it would induce collider bias. In Fig.~\ref{Fig:confounders}C, it is intuitive that $U$ is unnecessary to be known, because all causal effects are mediated by a very large number of unobserved causes, but we do not need complete knowledge of the world to make causal inferences.
 
 
 \begin{figure}
@@ -747,6 +747,9 @@ Note that no confounding is a special case of exogeneity under a theory $T$ of t
 \item Implemented in an \texttt{R} package, \texttt{causaleffect}
 \item Jupyter Notebook example \href{https://github.com/jaryaman/ML_demos/blob/master/Notebooks/do-calculus.ipynb}{here}
 \end{itemize}
+
+\section{Acknowledgements}
+Thanks to Aidan Marshall for many useful conversations on the topic of causal inference.
 
 \newpage
 \bibliography{causality.bib} 
