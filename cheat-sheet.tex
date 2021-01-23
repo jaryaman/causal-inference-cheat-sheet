@@ -221,12 +221,14 @@ P(y|\hat{x}_i') = \sum_{pa_i} P(y | x'_i, pa_i) P(pa_i)
 where $P(y|x_i', pa_i)$ and $P(pa_i)$ are preintervention probabilities. This is called ``adjusting for $PA_i$''.
 \end{thm}
 
-\paragraph{Identifiability}
+\subsection{Identifiability}
 Causal quantities are defined relative to a causal model $M$, not the joint distribution $P_M(v)$ over the set of observed variables $V$. Non-experimental data provides information about $P_M(v)$ alone, and several graphs can give rise to the same $P_M(v)$. Thus, not all quantities are unambiguously \textbf{identifiable} from observational data, \textbf{even with infinite samples}. Added assumptions by specifying a particular $M$ can provide enough details to compute quantities of interest without explicating $M$ in full.
 
-\begin{thm}
+\begin{thm}[Identifiability]
 Given a causal diagram $G$ of any Markovian model in which a subset of variables $V$ are measured, the causal effect $P(y|\hat{x})$ is identifiable whenever $\{X \cup Y \cup PA_X\} \subseteq V$. I.e. \textit{when all parents of the cause are measured, the causal effect can be identified}.
 \end{thm}
+
+
 
 \section{Inferring causal structure}
 \begin{itemize}
@@ -240,6 +242,7 @@ Given a causal diagram $G$ of any Markovian model in which a subset of variables
 \section{Adjusting for confounding bias}
 
 When seeking to evaluate the effect of one factor ($X$) on another ($Y$), we should ask \textbf{whether} we should \textit{adjust} for possible variations in other factors ($Z$, known as ``covariates'', ``concomitants'' or ``confounders''). This becomes apparent in \textbf{Simpson's paradox}: any statistical relationship between two variables may be reversed by including additional factors in the analysis (see Section~\ref{sec:simpson-confounding-collapsibility}).
+
 
 \subsection{The back-door criterion}
 This criterion demonstrates how confounders that \textit{affect} the treatment variable can be used to facilitate causal inference.
@@ -375,6 +378,20 @@ If models $D$ and $E$ are $d$-separation equivalent (see Definition~\ref{defn:d-
 A sufficient condition for identifying the causal effect $P(y|do(x))$ is that there exists no bi-directed path (i.e.\ a path composed entirely of bi-directed arcs, see Fig.~\ref{Fig:front_door}) between $X$ and any of its children \citep{Tian02}. Prior to applying this criterion, all nodes which are not ancestors of $Y$ are deleted from the graph (i.e.\ only consider nodes which are on pathways from $X$ to $Y$).
 \end{thm}
 
+\subsection{Confounders, latent common causes, and bi-directed arcs}
+
+Bi-directed arcs are, by definition, equivalent to a latent common cause between the two connecting variables (see Fig.~\ref{Fig:confounders}). This notation is useful because it is the only triad with a single latent variable where the latent common cause renders the causal effect unidentifiable. In Fig.~\ref{Fig:confounders}B, even if $U$ were available, conditioning upon it would induce collider bias. In Fig.~\ref{Fig:confounders}C, it is intuitive that $U$ is unnecessary to be known, because all causal effects are mediated by a very large number of unobserved causes, but we do not need complete knowledge of the world to make causal inferences.
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.4\columnwidth]{figures/confounders.png}  
+\end{center}
+\caption{\textbf{Bi-directed arcs are latent common causes by definition, and are the only acyclic triad with an unobserved variable where the causal effect is unidentifiable}. A) A bi-directed arc between variables $X$ and $Y$ is, by definition, equivalent to the graph $U \rightarrow X \rightarrow Y \leftarrow U$ where $U$ is unobserved (latent). This notation is useful because this triad is unique, in the sense that it is the only possible triad involving $U$ where $P(Y|do(x))$ is unidentifiable. B) For this DAG, applying Theorem~\ref{thm:do-calc-act-obs-ex}, $P(Y|do(x)) = P(Y|X)$, and so $U$ is irrelevant for estimation of the causal effect.  C) Again, $P(Y|do(x)) = P(Y|X)$ so $U$ is irrelevant. The final permutation of arrows is omitted because it induces a cycle, which is beyond the scope of basic causal inference.} 
+\label{Fig:confounders}
+\end{figure}
+
+
 \section{Actions, plans, and direct effects}
 
 Pearl defines two kinds of intervention:
@@ -507,7 +524,7 @@ where $S_{XY}$ stands for (any setting of) all variables in the model excluding 
 \begin{center}
 \includegraphics[width=0.8\columnwidth]{figures/selection-bias.png}  
 \end{center}
-\caption{\textbf{An example of selection bias in a study}. A) Suppose, for a particular college, both grades and musical ability affect admission rate. B) Suppose investigators seek to understand the relationship between grades and musical ability, and measure $G$ and $M$ amongst students of the college in an attempt to estimate $\alpha$ ($\alpha=0$ in reality). The investigators assume the DAG in (B) and discover a strong negative relationship between $G$ and $M$. C) However, the investigators would discover that the equality in Eq.\eqref{eq:test-corr-error} does not hold, and therefore $U_1$ and $U_2$ are correlated (owing to a selection bias from $A=1$, see Berkson's paradox). Hence the investigators must correct their DAG to include a latent common cause between $G$ and $M$. In this case, $\alpha$ becomes unidentifiable since all of the causal effect can (and, here, is!) attributable to the latent common cause.}
+\caption{\textbf{An example of selection bias in a study}. A) Suppose, for a particular college, both grades and musical ability affect admission rate. B) Suppose investigators seek to understand the relationship between grades and musical ability, and measure $G$ and $M$ amongst students of the college in an attempt to estimate $\alpha$ ($\alpha=0$ in reality). The investigators assume the DAG in (B) and discover a strong negative relationship between $G$ and $M$. C) However, the investigators would discover that the equality in Eq.\eqref{eq:test-corr-error} does not hold, and therefore $U_1$ and $U_2$ are correlated (owing to a selection bias from $A=1$, see Berkson's paradox). Hence the investigators should correct their DAG to include a latent common cause between $G$ and $M$ in order to prevent spurious inferences (see Fig.~\ref{Fig:confounders}). In doing so, $\alpha$ becomes unidentifiable since all of the causal effect can (and, here, is!) attributable to selection bias.}
 \label{Fig:selection-bias}
 \end{figure}
 
