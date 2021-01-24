@@ -132,10 +132,10 @@ A path $p$ is $d$-separated (or blocked) by a set of nodes $Z$ if and only if
 \item $p$ contains a chain $i \rightarrow m \rightarrow j$ or a fork $i \leftarrow m \rightarrow j$ such that the middle node $m$ is in $Z$, or
 \item $p$ contains a collider $i \rightarrow m \leftarrow j$ such that the middle node $m$ is not in $Z$ and such that no descendant of $m$ is in $Z$
 \end{enumerate}
-A set $Z$ d-separates $X$ from $Y$ if and only if $Z$ blocks \textbf{every} path from a node in $X$ to a node in $Y$
+A set $Z$ d-separates $X$ from $Y$ if and only if $Z$ blocks \textbf{every path} from a node in $X$ to a node in $Y$
 \end{defn}
 
-\begin{thm}[Probabilistic implications of $d$-separation]
+\begin{thm}[Probabilistic implications of $d$-separation] \label{thm:d-separation-indep}
 Consequently, if $X$ and $Y$ are $d$-separated by $Z$ in a DAG $G$, then $(X \indep Y | Z)$ in every distribution compatible with $G$. Conversely, if $X$, $Y$, and $Z$ are \textit{not} $d$-separated by $Z$ in a DAG $G$ then $X$ and $Y$ are dependent conditional on $Z$ in almost all distributions compatible with $G$ (assuming no parameter fine-tuning).
 \end{thm}
 
@@ -191,6 +191,21 @@ Given evidence $e=\{X_{obs}, Y_{obs}\}$, to compute probability of $Y=y$ under h
 \end{enumerate}
 
 \section{Causal Bayesian networks}
+
+\begin{thm}[Causal Markov condition]
+Every Markovian causal model induces a distribution $P(x_1,...,x_n)$ that satisfies the condition that each variable $X_i$ is independent of all its nondescendants, given its parents $PA_i$
+\end{thm}
+
+\begin{defn}[Stability]
+Stability (or faithfulness), is the assumption that all independencies embedded in a distribution $P$ are entailed by the structure of the causal model $D$ (via Theorem~\ref{thm:d-separation-indep}), and hence remain invariant to any change in the parameters $\Theta_D$.
+\end{defn}
+
+The assumption of stability is, in some sense, the inverse of the causal Markov condition. Stability is not always a reasonable assumption to make, especially in evolutionary contexts. Consider the DAG 
+\begin{equation}
+G_A \overset{-}{\rightarrow} G_B \overset{+}{\rightarrow} P \overset{+}{\leftarrow} G_A
+\end{equation}
+where $G$ is a gene and $P$ is a protein, and the overset denotes the sign of the direct effect. If these two pathways are usually finely balanced in order to control some critical quantity of $P$, then it may appear statistically that $G_A \indep P$, but this is an entirely parametric consequence, not a causal one. This is an example of a ``back-up'' mechanism.
+
 \begin{defn}[Causal effect]
 Given two disjoint sets of variables $X$ and $Y$, the \textbf{causal effect} of $X$ on $Y$, denoted as $P(y|\hat{x})$ or $P(y|do(x))$, is the probability of $Y=y$ by deleting all equations from Eq.\eqref{eq:func-caus-mod} where variables $X$ are on the l.h.s., and substituting $X=x$ in the remaining equations. This corresponds to mutilating the DAG such that all arrows pointing directly to $X$ are removed. \textbf{Amputation is the difference between seeing and doing}.
 \end{defn}
@@ -231,12 +246,25 @@ Given a causal diagram $G$ of any Markovian model in which a subset of variables
 
 
 \section{Inferring causal structure}
+
+\begin{defn}[Pattern]
+A pattern is a partially directed DAG in which directed edges are edges common to every member of an equivalence class, and undirected edges represent ambivalence with respect to the direction of the edge. 
+\end{defn}
+
+\subsection{Pattern search algorithms}
+
 \begin{itemize}
-\item IC algorithm is for inferring causal structure given observational data when there are no latent variables
-\item IC* algorithm is for inferring causal structure given observational data when there are latent variables. The PC algorithm is apparently more contemporary (see \cite{spirtes10})
+\item IC algorithm is for inferring patterns given observational data when there are no latent variables (Markov)
+\item IC* algorithm is for inferring causal structure given observational data when there are latent common causes (semi-Markov) 
+\item PC algorithm \citep{spirtes10} assumes that the underlying causal structure of the input data is acyclic, entirely continuous or entirely discrete, and that no two variables are caused by the same latent variable (see Definition~\ref{def:no-confounding}). Note that the appropriate significance threshold is a function of the sample size, and there is no general theory for how the threshold should be dropped with sample size.
+\item FGS (fast greedy equivalence search), which searches for the whole pattern, and seeks to find a pattern with maximized score. Can allow you to infer the pattern with $10^9$ variables or more \citep{Ramsey17}.
+\item Lingam (linear non-Gaussian acyclic model for causal discovery) will allow discovery of a \textbf{unique} DAG when all relationships are linear but the disturbance terms on all variables are non-Gaussian, with skew \citep{Shimizu06}.
+\end{itemize}
+
+These algorithms are often point-wise consistent (satisfying assumptions, will converge with probability 1 to an equivalence class containing the true DAG) but not uniformly consistent (can compute error bounds and confidence intervals for finite samples). Other points:
+\begin{itemize}
 \item There are local criteria for potential cause and genuine cause
 \item Spurious association: $X$ and $Y$ are spuriously associated if they are dependent in some context and there exists a latent common cause, as exemplified in the structure $Z_1 \rightarrow X \rightarrow Y \leftarrow Z_2$
-\item NOTEARS \citep{zheng18} casts the structure learning problem as a continuous optimization problem over real matrices to avoid the superexponential combinatorial explosion with number of variables.
 \end{itemize}
 
 \section{Adjusting for confounding bias}
@@ -720,7 +748,7 @@ P(E|do(C)) < P(E|do(\neg C))
 
 Theorem~\ref{thm:sure-thing} follows from do-calculus, and gives the intuitive result that if the drug in Fig.~\ref{Fig:simpson}A harms both men and women then one should not administer the drug if one does not know the patient's gender, despite the fact that the observational conditional densities obey $P(E|C)>P(E|\neg C)$. The ``paradox'' in the example arises because the males, who recover (regardless of the drug) more often than the females, are also more likely than the females to use the drug.
 
-\begin{defn}[No confounding]
+\begin{defn}[No confounding] \label{def:no-confounding}
 Variables $X$ and $Y$ are not confounded in a causal model $M$ if and only if
 \begin{equation}
 P(y|do(x)) = P(y|x),\ \text{or}\ P(x|do(y)) = P(x|y)
@@ -748,7 +776,7 @@ Note that no confounding is a special case of exogeneity under a theory $T$ of t
 \item Jupyter Notebook example \href{https://github.com/jaryaman/ML_demos/blob/master/Notebooks/do-calculus.ipynb}{here}
 \end{itemize}
 
-\section{Acknowledgements}
+\section*{Acknowledgements}
 Thanks to Aidan Marshall for many useful conversations on the topic of causal inference.
 
 \newpage
