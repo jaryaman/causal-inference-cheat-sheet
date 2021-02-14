@@ -144,7 +144,7 @@ A functional causal model consists of a set of equations of the form
 \begin{equation}
 x_i = f_i(pa_i, u_i), \quad i=1,...,n \label{eq:func-caus-mod}
 \end{equation}
-where $pa_i$ are the set of variables (parents) that directly determine the value of $X_i$ (i.e.\ its direct causes) and $U_i$ represents errors (or ``disturbances'') due to omitted factors. Eq.\eqref{eq:func-caus-mod} is called a causal model if each equation represents the process by which the \textit{value} (not merely the probability) of variable $X_i$ is selected.
+where $pa_i$ are the set of variables (parents) that directly determine the value of $X_i$ (i.e.\ its direct causes) and $U_i$ represents errors (or ``disturbances'') due to omitted factors. Eq.\eqref{eq:func-caus-mod} is called a causal model if each equation represents the process by which the \textit{value} (not merely the probability) of variable $X_i$ is selected (see also Definition~\ref{defn:struct-causal-model}).
 
 When some disturbances $U_i$ are judged to be dependent, it is customary to denote such dependencies in a causal graph with double-headed arrows. If the causal diagram is acyclic, then the corresponding model is called \textit{semi-Markovian} and the values of the variables $X$ are uniquely determined by those of the variables $U$. If the error terms $U$ are jointly independent, the model is called \textit{Markovian}.
 
@@ -784,7 +784,52 @@ E_z g[P(x,y|z)] = g[P(x,y)]
 
 If $g$ stands for any linear functional of $P(y|x)$, such as the risk difference $P(y|x_1) - P(y|x_2)$, then collapsibility holds whenever $Z \indep X$ or $Z \indep Y| X$. Hence, any violation of collapsibility implies violation of the two statistical conditions in Theorem~\ref{thm:no-conf-criterion}. So whilst collapsibility is linked to confounding, in the absence of the assumptions $A_z$, collapsibility is neither necessary nor sufficient.
 
+\section{Structure-based counterfactuals}
 
+Let's begin by writing Eq.\eqref{eq:func-caus-mod} more formally:
+
+\begin{defn}[Structural Causal Model] \label{defn:struct-causal-model}
+A causal model is a triple
+\begin{equation}
+M = \langle U, V, F \rangle \nonumber
+\end{equation}
+where
+\begin{enumerate}[noitemsep]
+\item $U$ is a set of background (exogenous) variables, that are determined by factors outside the model;
+\item $V$ is a set $\{V_1, V_2,..., V_n \}$ of (endogenous) variables, that are determined by variables in the model -- that is, variables in $U \cup V$; and
+\item $F$ is a set of functions $\{f_1, f_2,...,f_n \}$ such that each $f_i$ is a mapping from (the respective domains of) $U_i \cup PA_i$, where $U_i \subseteq U$ and $PA_i \subseteq V \setminus V_i$ and the entire set $F$ forms a mapping from $U$ to $V$. In other words, each $f_i$ in
+\begin{equation}
+v_i = f_i(pa_i, u_i), \ i=1,...,n \nonumber
+\end{equation}
+assigns a value to $V_i$ that depends on (the values of) a select set of variables in $V \cup U$, and the entire set $F$ has a unique solution $V(u)$.
+\end{enumerate}
+\end{defn}
+
+Uniqueness is ensured in recursive (acyclic) systems, but multiple solutions are allowed in non-recursive systems. Every causal model $M$ can be associated with a graph $G(M)$ called a \textbf{causal diagram} where nodes are variables and directed edges point from members of $PA_i$ and $U_i$ towards $V_i$. $G(M)$ identifies the endogenous and background variables that have direct influence on each $V_i$, but not the functional form $f_i$. The convention of confining the parent set $PA_i$ to variables in $V$ stems from the fact that the background variables are often unobservable.
+
+\begin{defn}[Submodel]
+Let $M$ be a causal model, $X$ a set of variables in $V$, and $x$ a particular realization of $X$. A submodel $M_x$ of $M$ is the causal model
+\begin{equation}
+M_x = \langle U, V, F_x \rangle, \nonumber
+\end{equation}
+where
+\begin{equation}
+F_x = \{f_i : V_i \notin X \} \cup \{X=x \}
+\end{equation}
+I.e. $F_x$ is formed by deleting from $F$ all functions $f_i$ corresponding to members of set $X$ and replacing them with the set of constant functions $X=x$.
+\end{defn}
+
+\begin{defn}[Effect of action]
+Let $M$ be a causal model, $X$ a set of variables in $V$, and $x$ a particular realization of $X$. The effect of action $do(X=x)$ on $M$ is given by the submodel $M_x$.
+\end{defn}
+
+\begin{defn}[Potential response]
+Let $X$ and $Y$ be two subsets in $V$. The potential response of $Y$ to action $do(X=x)$, denoted $Y_x(u)$, is the solution for $Y$ of the set of equations $F_x$. That is, $Y_x(u) = Y_{M_x}(u)$. If $Y$ is a set of variables $Y=(Y_1,Y_2,...)$ then $Y_x(u) = (Y_{1_x},Y_{2_x},...)$.
+\end{defn}
+
+\begin{defn}[Counterfactual]
+Let $X$ and $Y$ be two subsets of variables in $V$. The counterfactual sentence ``$Y$ would be $y$ in situation $u$, had $X$ been x'' is interpreted as the equality $Y_x(u)=y$, with $Y_x(u)$ being the potential response of $Y$ to $X=x$.
+\end{defn}
 
 \section{Software}
 
