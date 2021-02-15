@@ -154,7 +154,7 @@ x_i = \sum_{k \neq i} \alpha_{ik} x_k + u_i, \quad i=1,...,n
 \end{equation}
 In linear models, $pa_i$ corresponds to variables on the r.h.s.\ of the above equation where $\alpha_{ik} \neq 0$.
 
-\subsection{Counterfactuals in functional causal models: An example}
+\subsection{Counterfactuals in functional causal models: An example} \label{sec:counterfactuals-example}
 Consider a randomized clinical trial, where patients are/are not treated $X \in \{0,1\}$. We also observe whether the patients die after treatment $Y\{0,1\}$. We wish to ask the question: did the patient die \textit{because of} the treatment, \textit{despite} the treatment, or \textit{regardless} of the treatment.
 
 Assume $P(y|x) = 0.5$, and therefore $P(y,x)=0.25$ for all $x$ and $y$. We can write two models with the same joint distribution
@@ -829,6 +829,47 @@ Let $X$ and $Y$ be two subsets in $V$. The potential response of $Y$ to action $
 
 \begin{defn}[Counterfactual]
 Let $X$ and $Y$ be two subsets of variables in $V$. The counterfactual sentence ``$Y$ would be $y$ in situation $u$, had $X$ been x'' is interpreted as the equality $Y_x(u)=y$, with $Y_x(u)$ being the potential response of $Y$ to $X=x$.
+\end{defn}
+
+\begin{defn}[Probabilistic causal model]
+A probabilistic causal model is a pair
+\begin{equation}
+\langle M, P(u)\rangle \nonumber
+\end{equation}
+where $M$ is a causal model and $P(u)$ is a probability function defined over the domain of the background variables $U$.
+\end{defn}
+
+The function $P(u)$, together with $f_i$, defines a probability distribution over endogenous variables
+\begin{equation}
+P(y) \defeq P(Y=y) = \sum_{\{u|Y(u)=y\}} P(u)
+\end{equation}
+and counterfactual probabilities are defined in a similar model through the function $Y_x(u)$ induced by submodel $M_x$:
+\begin{equation}
+P(Y_x=y) = P(Y=y) = \sum_{\{u|Y_x(u)=y\}} P(u).
+\end{equation}
+Similarly, one can define joint densities over counterfactuals and observations over (not necessarily disjoint) sets of variables
+\begin{align}
+P(Y_x=y, X=x') &= \sum_{\{u|Y_x(u)=y\ \&\ X(u)=x'\}} P(u) \\
+P(Y_x=y, Y_{x'}=y') &= \sum_{\{u|Y_x(u)=y\ \&\ Y_{x'}(u)=y'\}} P(u)
+\end{align}
+
+We may interpret statements like ``the probability that $X=x$ was the cause of event $Y=y$'' using the counterfactual statement ``the probability that $Y$ would not be equal to $y$ had it not been for $X=x$, given that $X=x$ and $Y=y$ have in fact occurred''. We can write this counterfactual as a conditional on observations
+\begin{align}
+P(Y_{x'}=y'| X=x, Y=y) &= \frac{P(Y_{x'}=y', X=x, Y=y)}{P(X=x, Y=y)} \\
+&= \sum_u P(Y_{x'}(u) = y')P(u|x, y).
+\end{align}
+In other words, we use the observations to update $P(u)$ to $P(u|x,y)$, and then use this update to compute the expectation of the equality $Y_{x'}=u$ [\textbf{TODO: Clarify after Ch~9}]. This substantiates the three-step procedure discussed in Section~/\ref{sec:counterfactuals-example}, summarized in the following theorem:
+\begin{thm}
+Given model $\langle M, P(u)\rangle$, the conditional probability $P(B_A|e)$ of a counterfactual statement ``If it were $A$ then $B$'', given observational evidence $e$, can be evaluated using the following three steps:
+\begin{enumerate}[noitemsep]
+\item \textbf{Abduction} -- Update $P(u)$ by the evidence $e$ to obtain $P(u|e)$.
+\item \textbf{Action} -- Modify $M$ by the action $do(A)$, where $A$ is the antecedent of the counterfactual, to obtain submodel $M_A$.
+\item \textbf{Prediction} -- Use the modified model $\langle M_A, P(u|e)\rangle$ to compute the probability of $B$, the consequence of the counterfactual.
+\end{enumerate}
+\end{thm}
+
+\begin{defn}[Worlds and theories]
+A causal world $w$ is a pair $\langle M,u \rangle$, where $M$ is a causal model and $u$ is a particular realization of the background variables $U=u$ (i.e.\ $P(u)=1$). A causal theory is a set of causal worlds.
 \end{defn}
 
 \section{Software}
