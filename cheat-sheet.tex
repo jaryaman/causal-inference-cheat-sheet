@@ -862,7 +862,7 @@ In other words, we use the observations to update $P(u)$ to $P(u|x,y)$, and then
 \begin{thm}
 Given model $\langle M, P(u)\rangle$, the conditional probability $P(B_A|e)$ of a counterfactual statement ``If it were $A$ then $B$'', given observational evidence $e$, can be evaluated using the following three steps:
 \begin{enumerate}[noitemsep]
-\item \textbf{Abduction} -- Update $P(u)$ by the evidence $e$ to obtain $P(u|e)$.
+\item \textbf{Abduction} -- Update $P(u)$ by the evidence $e$ to obtain $P(u|e)$. (Abduction means reasoning from evidence to explanation)
 \item \textbf{Action} -- Modify $M$ by the action $do(A)$, where $A$ is the antecedent of the counterfactual, to obtain submodel $M_A$.
 \item \textbf{Prediction} -- Use the modified model $\langle M_A, P(u|e)\rangle$ to compute the probability of $B$, the consequence of the counterfactual.
 \end{enumerate}
@@ -871,6 +871,10 @@ Given model $\langle M, P(u)\rangle$, the conditional probability $P(B_A|e)$ of 
 \begin{defn}[Worlds and theories]
 A causal world $w$ is a pair $\langle M,u \rangle$, where $M$ is a causal model and $u$ is a particular realization of the background variables $U=u$ (i.e.\ $P(u)=1$). A causal theory is a set of causal worlds.
 \end{defn}
+
+The crucial difference between counterfactual statements and a statement about actions, is that \textbf{in counterfactual statements, the facts (i.e. the evidence) can potentially be affected by the antecedents}. For example, in the two-man firing squad example, ``If the prisoner is dead [evidence], then the prisoner would be dead even if rifleman $A$ had not shot [antecedent]''. In this sentence, the fact that the prisoner is dead could be affected by the fact that $A$ did not shoot. This is not the case for statements about actions. For example, ``If the captain gave no signal [evidence] and rifleman $A$ decides to shoot [antecedent], then the prisoner will die and $B$ will not shoot''. Here, the evidence that the captain gives no signal is not affected by the antecedent that $A$ shoots. In natural language, counterfactual utterances tend to presume knowledge of facts that are affected by the antecedent. For example ``$O$ would be different were it not for $A$'' implies knowledge of the actual value of $O$, and that $O$ is susceptible to $A$. In general, some knowledge of the functional mechanisms of $f_i(pa_i, u_i)$ are necessary to evaluate such statements.
+
+
 
 \section{Software}
 
