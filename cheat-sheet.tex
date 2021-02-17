@@ -126,7 +126,7 @@ P(x_1, ..., x_n) = \prod_i P(x_i|pa_i). \label{eq:bayes-net-char}
 
 Let an arrow $pa_j \rightarrow x_j$ denote part of a directed acyclic graph (DAG) in which variables are represented by nodes, and arrows are drawn from each node of the parent set $PA_j$ towards the child node $X_j$.
 
-\begin{defn}[$d$-separation]
+\begin{defn}[$d$-separation] \label{defn:d-sep}
 A path $p$ is $d$-separated (or blocked) by a set of nodes $Z$ if and only if
 \begin{enumerate}[noitemsep]
 \item $p$ contains a chain $i \rightarrow m \rightarrow j$ or a fork $i \leftarrow m \rightarrow j$ such that the middle node $m$ is in $Z$, or
@@ -785,7 +785,7 @@ E_z g[P(x,y|z)] = g[P(x,y)]
 If $g$ stands for any linear functional of $P(y|x)$, such as the risk difference $P(y|x_1) - P(y|x_2)$, then collapsibility holds whenever $Z \indep X$ or $Z \indep Y| X$. Hence, any violation of collapsibility implies violation of the two statistical conditions in Theorem~\ref{thm:no-conf-criterion}. So whilst collapsibility is linked to confounding, in the absence of the assumptions $A_z$, collapsibility is neither necessary nor sufficient.
 
 \section{Structure-based counterfactuals}
-
+\subsection{Definitions}
 Let's begin by writing Eq.\eqref{eq:func-caus-mod} more formally:
 
 \begin{defn}[Structural Causal Model] \label{defn:struct-causal-model}
@@ -859,7 +859,7 @@ P(Y_{x'}=y'| X=x, Y=y) &= \frac{P(Y_{x'}=y', X=x, Y=y)}{P(X=x, Y=y)} \\
 &= \sum_u P(Y_{x'}(u) = y')P(u|x, y).
 \end{align}
 In other words, we use the observations to update $P(u)$ to $P(u|x,y)$, and then use this update to compute the expectation of the equality $Y_{x'}=u$ [\textbf{TODO: Clarify after Ch~9}]. This substantiates the three-step procedure discussed in Section~/\ref{sec:counterfactuals-example}, summarized in the following theorem:
-\begin{thm}
+\begin{thm}[Computation of counterfactual statements] \label{thm:comp-counterfactuals}
 Given model $\langle M, P(u)\rangle$, the conditional probability $P(B_A|e)$ of a counterfactual statement ``If it were $A$ then $B$'', given observational evidence $e$, can be evaluated using the following three steps:
 \begin{enumerate}[noitemsep]
 \item \textbf{Abduction} -- Update $P(u)$ by the evidence $e$ to obtain $P(u|e)$. (Abduction means reasoning from evidence to explanation)
@@ -874,7 +874,16 @@ A causal world $w$ is a pair $\langle M,u \rangle$, where $M$ is a causal model 
 
 The crucial difference between counterfactual statements and a statement about actions, is that \textbf{in counterfactual statements, the facts (i.e. the evidence) can potentially be affected by the antecedents}. For example, in the two-man firing squad example, ``If the prisoner is dead [evidence], then the prisoner would be dead even if rifleman $A$ had not shot [antecedent]''. In this sentence, the fact that the prisoner is dead could be affected by the fact that $A$ did not shoot. This is not the case for statements about actions. For example, ``If the captain gave no signal [evidence] and rifleman $A$ decides to shoot [antecedent], then the prisoner will die and $B$ will not shoot''. Here, the evidence that the captain gives no signal is not affected by the antecedent that $A$ shoots. In natural language, counterfactual utterances tend to presume knowledge of facts that are affected by the antecedent. For example ``$O$ would be different were it not for $A$'' implies knowledge of the actual value of $O$, and that $O$ is susceptible to $A$. In general, some knowledge of the functional mechanisms of $f_i(pa_i, u_i)$ are necessary to evaluate such statements.
 
+\subsection{Twin network representation}
+A difficulty in Theorem~\ref{thm:comp-counterfactuals} is the need to compute, store, and use the posterior distribution $P(u|e)$. This difficulty can be avoided using the twin network representation for counterfactual computation. We replicate the endogenous variables and label them distinctly, share the exogenous variables, and amputate edges of the twin network to represent the antecedent of the counterfactual. Given a counterfactual query $P(Y_x=y|z)$ for arbitrary $X$, $Y$, and $Z$, it is sufficient to compute $P(y^*|z)$ which can be performed by standard evidence propagation techniques, rather than computing the full posterior distribution $P(u|e)$ -- see Fig.~\ref{Fig:twin-network}. The twin representation is also useful for testing independencies between counterfactual quantities by testing $d$-separation (Defn.~\ref{defn:d-sep}).
 
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.4\columnwidth]{figures/twin-network.png}  
+\end{center}
+\caption{\textbf{Twin network representation of (semi-deterministic) firing squad problem}. A court $U$ issues an order to captain $C$ to execute a prisoner, with some probability. Upon receiving an order, the captain instructs both riflemen $A$ and $B$ to fire. Rifleman $A$ is of a nervous disposition ($W$), causing him to fire randomly (and independently of the order), with some probability. The prisoner dies if either $A$ or $B$ opens fire. Consider the counterfactual query: ``Given that the prisoner is dead, what is the probability that the prisoner would be alive if $A$ did not shoot?'', i.e. $P(\neg D_{\neg A}| D)$. This can be answered without reference to $P(u,w|D)$, only the ordinary conditional probability $P(\neg D^*|D)$, using the twin network representation. }
+\label{Fig:twin-network}
+\end{figure}
 
 \section{Software}
 
@@ -896,7 +905,7 @@ The crucial difference between counterfactual statements and a statement about a
 \end{itemize}
 
 \section*{Acknowledgements}
-Thanks to Aidan Marshall for many useful conversations on the topic of causal inference.
+Thanks to Aidan Marshall for many useful conversations on the topic of causal inference. 
 
 \newpage
 \bibliography{causality.bib} 
