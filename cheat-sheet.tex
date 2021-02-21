@@ -799,7 +799,7 @@ where
 \item $V$ is a set $\{V_1, V_2,..., V_n \}$ of (endogenous) variables, that are determined by variables in the model -- that is, variables in $U \cup V$; and
 \item $F$ is a set of functions $\{f_1, f_2,...,f_n \}$ such that each $f_i$ is a mapping from (the respective domains of) $U_i \cup PA_i$, where $U_i \subseteq U$ and $PA_i \subseteq V \setminus V_i$ and the entire set $F$ forms a mapping from $U$ to $V$. In other words, each $f_i$ in
 \begin{equation}
-v_i = f_i(pa_i, u_i), \ i=1,...,n \nonumber
+v_i = f_i(pa_i, u_i), \ i=1,...,n \label{eq:structural-equations}
 \end{equation}
 assigns a value to $V_i$ that depends on (the values of) a select set of variables in $V \cup U$, and the entire set $F$ has a unique solution $V(u)$.
 \end{enumerate}
@@ -868,11 +868,19 @@ Given model $\langle M, P(u)\rangle$, the conditional probability $P(B_A|e)$ of 
 \end{enumerate}
 \end{thm}
 
+\begin{defn}[Connection between causal effect and counterfactual]
+\begin{equation}
+P(Y|do(x)) \defeq P(Y_{x}=y)
+\end{equation}
+\end{defn}
+
 \begin{defn}[Worlds and theories]
 A causal world $w$ is a pair $\langle M,u \rangle$, where $M$ is a causal model and $u$ is a particular realization of the background variables $U=u$ (i.e.\ $P(u)=1$). A causal theory is a set of causal worlds.
 \end{defn}
 
 The crucial difference between counterfactual statements and a statement about actions, is that \textbf{in counterfactual statements, the facts (i.e. the evidence) can potentially be affected by the antecedents}. For example, in the two-man firing squad example, ``If the prisoner is dead [evidence], then the prisoner would be dead even if rifleman $A$ had not shot [antecedent]''. In this sentence, the fact that the prisoner is dead could be affected by the fact that $A$ did not shoot. This is not the case for statements about actions. For example, ``If the captain gave no signal [evidence] and rifleman $A$ decides to shoot [antecedent], then the prisoner will die and $B$ will not shoot''. Here, the evidence that the captain gives no signal is not affected by the antecedent that $A$ shoots. In natural language, counterfactual utterances tend to presume knowledge of facts that are affected by the antecedent. For example ``$O$ would be different were it not for $A$'' implies knowledge of the actual value of $O$, and that $O$ is susceptible to $A$. In general, some knowledge of the functional mechanisms of $f_i(pa_i, u_i)$ are necessary to evaluate such statements.
+
+In a more general sense, causal effects tend to be concepts based on \textit{general} causes (e.g. ``Drinking hemlock causes death''), whereas counterfactuals tend to be concepts based on \textit{singular} causes (e.g.\ ``Socrates' drinking hemlock caused his death''). The latter (counterfactuals) tends to require access to more detailed, mechanistic, specifications and higher computational resources than the former (generic causes). Formally, the difference hinges on whether we need to condition our beliefs on the cause/effect events that actually occurred. 
 
 \subsection{Twin network representation}
 A difficulty in Theorem~\ref{thm:comp-counterfactuals} is the need to compute, store, and use the posterior distribution $P(u|e)$. This difficulty can be avoided using the twin network representation for counterfactual computation. We replicate the endogenous variables and label them distinctly, share the exogenous variables, and amputate edges of the twin network to represent the antecedent of the counterfactual. Given a counterfactual query $P(Y_x=y|z)$ for arbitrary $X$, $Y$, and $Z$, it is sufficient to compute $P(y^*|z)$ which can be performed by standard evidence propagation techniques, rather than computing the full posterior distribution $P(u|e)$ -- see Fig.~\ref{Fig:twin-network}. The twin representation is also useful for testing independencies between counterfactual quantities by testing $d$-separation (Defn.~\ref{defn:d-sep}).
@@ -884,6 +892,16 @@ A difficulty in Theorem~\ref{thm:comp-counterfactuals} is the need to compute, s
 \caption{\textbf{Twin network representation of (semi-deterministic) firing squad problem}. A court $U$ issues an order to captain $C$ to execute a prisoner, with some probability. Upon receiving an order, the captain instructs both riflemen $A$ and $B$ to fire. Rifleman $A$ is of a nervous disposition ($W$), causing him to fire randomly (and independently of the order), with some probability. The prisoner dies if either $A$ or $B$ opens fire. Consider the counterfactual query: ``Given that the prisoner is dead, what is the probability that the prisoner would be alive if $A$ did not shoot?'', i.e. $P(\neg D_{\neg A}| D)$. This can be answered without reference to $P(u,w|D)$, only the ordinary conditional probability $P(\neg D^*|D)$, using the twin network representation. }
 \label{Fig:twin-network}
 \end{figure}
+
+\subsection{Simon's causal ordering}
+
+In general, a physical law need not be specified as a system of structural equations (Eq.\ref{eq:structural-equations}), but as a set of functional constraints
+\begin{equation}
+G_k(x_1,...,x_l; u_1,...,u_m) = 0
+\end{equation}
+without identifying a `dependent' variable (positivism: where all descriptions of Nature are defined through `functiona relations' and `interdependence' amongst variables). This seems to be at odds with the notion of causation.
+
+\cite{Simon77} devised a procedure for deciding whether a collection of such functions $G_k$ dictates a unique way of selecting an endogenous dependent variable for each mechanism $G_k$. The procedure involves finding an order of variables $(X_1,...,X_n)$ such that we can solve for each $X_i$ without solving for any of $X_i$'s successor. If such an ordering exists, it dictates the direction of causal attribution. The ordering is unique if one can find a unique one-to-one correspondence between equations $G$ and variables $X$. If the matching is unique, then the choice of dependent variable is unique and defines a DAG \citep{Nayak94}. This means that the problem of causal induction can be reduced to the more familiar problem of scientific induction.
 
 \section{Software}
 

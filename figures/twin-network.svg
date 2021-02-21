@@ -14,7 +14,10 @@
    version="1.1"
    id="svg8"
    sodipodi:docname="twin-network.svg"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:export-filename="C:\Users\jarya\Dropbox\Projects\Causal_inference\causal-inference-cheat-sheet\figures\twin-network.png"
+   inkscape:export-xdpi="100"
+   inkscape:export-ydpi="100">
   <defs
      id="defs2">
     <marker
@@ -238,11 +241,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.73673541"
-     inkscape:cx="650.20773"
-     inkscape:cy="444.83718"
+     inkscape:zoom="1.0419012"
+     inkscape:cx="325.58276"
+     inkscape:cy="227.52359"
      inkscape:document-units="mm"
-     inkscape:current-layer="id-dfcbba09-d248-43c2-8690-a1cd180d550d"
+     inkscape:current-layer="id-eb6971cb-dd11-4ede-8851-e2e02efce905"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:window-width="1920"
@@ -434,7 +437,7 @@
          sodipodi:nodetypes="cc" />
       <path
          style="fill:none;stroke:#000000;stroke-width:0.399409;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1355)"
-         d="m 167.94435,117.62161 9.73584,10.2963"
+         d="m 169.17383,117.46792 8.66004,10.80858"
          id="path1351"
          sodipodi:nodetypes="cc" />
       <path
@@ -449,7 +452,7 @@
          sodipodi:nodetypes="cc" />
       <path
          style="fill:none;stroke:#000000;stroke-width:0.399409;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1523)"
-         d="m 182.97829,84.839052 -27.39809,28.255698 0.43469,16.22833"
+         d="m 183.13198,84.992737 -27.29564,27.999553 0.0249,14.79394"
          id="path1519"
          sodipodi:nodetypes="ccc" />
       <circle
@@ -478,12 +481,12 @@
          r="1.219998" />
       <path
          style="fill:none;stroke:#000000;stroke-width:0.399409;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1747)"
-         d="m 195.50106,82.966664 26.37535,31.910626"
+         d="m 196.13498,82.912328 25.74143,31.964962"
          id="path1695"
          sodipodi:nodetypes="cc" />
       <path
          style="fill:none;stroke:#000000;stroke-width:0.399409;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1727)"
-         d="m 222.11526,117.18692 9.73584,10.2963"
+         d="m 223.19106,116.93078 8.86495,10.55244"
          id="path1699"
          sodipodi:nodetypes="cc" />
       <path
