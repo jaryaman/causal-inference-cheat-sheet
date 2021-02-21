@@ -76,6 +76,7 @@
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{defn}{Definition}[section]
 \newtheorem{cor}{Corollary}[section]
+\newtheorem{prop}{Property}[section]
 
 %Preamble end--------------------------------------------------
 
@@ -902,6 +903,48 @@ G_k(x_1,...,x_l; u_1,...,u_m) = 0
 without identifying a `dependent' variable (positivism: where all descriptions of Nature are defined through `functiona relations' and `interdependence' amongst variables). This seems to be at odds with the notion of causation.
 
 \cite{Simon77} devised a procedure for deciding whether a collection of such functions $G_k$ dictates a unique way of selecting an endogenous dependent variable for each mechanism $G_k$. The procedure involves finding an order of variables $(X_1,...,X_n)$ such that we can solve for each $X_i$ without solving for any of $X_i$'s successor. If such an ordering exists, it dictates the direction of causal attribution. The ordering is unique if one can find a unique one-to-one correspondence between equations $G$ and variables $X$. If the matching is unique, then the choice of dependent variable is unique and defines a DAG \citep{Nayak94}. This means that the problem of causal induction can be reduced to the more familiar problem of scientific induction.
+
+\subsection{Axioms of structural counterfactuals}
+We present three properties of counterfactuals -- composition, effectiveness, and reversibility -- that hold in all causal models.
+
+\begin{prop}[Composition] \label{prop:composition}
+For any three sets of endogenous variables $X$, $Y$, and $W$ in a causal model, we have
+\begin{equation}
+W_x(u) = w \implies\ Y_{xw}(u) = Y_x(u)
+\end{equation}
+\end{prop}
+
+Composition states that, if we force a variable ($W$) to a value $w$ that it would have had without our intervention, then the intervention will have no effect on other variables ($Y$) in the system. That invariance holds for all fixed conditions $do(X=x)$.
+
+\begin{defn}[Null action]
+\begin{equation}
+Y_{\emptyset}(u) \defeq Y(u) \nonumber
+\end{equation}
+\end{defn}
+
+\begin{cor}[Consistency]
+For any set of variables $Y$ and $X$ in a causal model,
+\begin{equation}
+X(u)=x \implies\ Y(u) = Y_x(u)
+\end{equation}
+\end{cor}
+In other words, if we force variable $X$ to take the value it would have naturally had, then a counterfactual is equivalent to the observational value.
+
+\begin{prop}[Effectiveness]
+For all sets of variables $X$ and $W$,
+\begin{equation}
+X_{xw}(u) = x.
+\end{equation}
+\end{prop} 
+Effectiveness states that if we force a variable $X$ to have the value $x$, then $X$ will indeed take on the value $x$.
+
+\begin{prop}[Reversibility]
+For any two variables $Y$ and $W$, and any set of variables $X$
+\begin{equation}
+(Y_{xw}(u)=y)\ \&\ (W_{xy}(u)=w) \implies Y_x(u)=y
+\end{equation}
+\end{prop}
+Reversibility precludes multiple solutions due to feedback loops. If setting $W$ to a value $w$ results in a value $y$ for $Y$, and if setting $Y$ to the value $y$ results in $W$ achieving the value $w$, then $W$ and $Y$ will naturally obtain the values $w$ and $y$, without any external setting. This holds for all fixed conditions $do(X=x)$.
 
 \section{Software}
 
