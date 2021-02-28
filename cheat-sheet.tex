@@ -806,7 +806,7 @@ assigns a value to $V_i$ that depends on (the values of) a select set of variabl
 \end{enumerate}
 \end{defn}
 
-Uniqueness is ensured in recursive (acyclic) systems, but multiple solutions are allowed in non-recursive systems. Every causal model $M$ can be associated with a graph $G(M)$ called a \textbf{causal diagram} where nodes are variables and directed edges point from members of $PA_i$ and $U_i$ towards $V_i$. $G(M)$ identifies the endogenous and background variables that have direct influence on each $V_i$, but not the functional form $f_i$. The convention of confining the parent set $PA_i$ to variables in $V$ stems from the fact that the background variables are often unobservable.
+Uniqueness is ensured in recursive systems (acyclic, see Defn.~\ref{def:recursiveness}), but multiple solutions are allowed in non-recursive systems. Every causal model $M$ can be associated with a graph $G(M)$ called a \textbf{causal diagram} where nodes are variables and directed edges point from members of $PA_i$ and $U_i$ towards $V_i$. $G(M)$ identifies the endogenous and background variables that have direct influence on each $V_i$, but not the functional form $f_i$. The convention of confining the parent set $PA_i$ to variables in $V$ stems from the fact that the background variables are often unobservable.
 
 \begin{defn}[Submodel]
 Let $M$ be a causal model, $X$ a set of variables in $V$, and $x$ a particular realization of $X$. A submodel $M_x$ of $M$ is the causal model
@@ -930,7 +930,7 @@ X(u)=x \implies\ Y(u) = Y_x(u)
 \end{cor}
 In other words, if we force variable $X$ to take the value it would have naturally had, then a counterfactual is equivalent to the observational value.
 
-\begin{prop}[Effectiveness]
+\begin{prop}[Effectiveness] \label{prop:effectiveness}
 For all sets of variables $X$ and $W$,
 \begin{equation}
 X_{xw}(u) = x.
@@ -938,13 +938,25 @@ X_{xw}(u) = x.
 \end{prop} 
 Effectiveness states that if we force a variable $X$ to have the value $x$, then $X$ will indeed take on the value $x$.
 
-\begin{prop}[Reversibility]
+\begin{prop}[Reversibility] \label{prop:reversibility}
 For any two variables $Y$ and $W$, and any set of variables $X$
 \begin{equation}
 (Y_{xw}(u)=y)\ \&\ (W_{xy}(u)=w) \implies Y_x(u)=y
 \end{equation}
 \end{prop}
 Reversibility precludes multiple solutions due to feedback loops. If setting $W$ to a value $w$ results in a value $y$ for $Y$, and if setting $Y$ to the value $y$ results in $W$ achieving the value $w$, then $W$ and $Y$ will naturally obtain the values $w$ and $y$, without any external setting. This holds for all fixed conditions $do(X=x)$.
+
+Properties \ref{prop:composition}, \ref{prop:effectiveness}, and \ref{prop:reversibility} hold in all causal models -- they are necessary and sufficient axioms for all causal statements. In other words, if we can reduce a counterfactual quantity $Q$ into an expression that involves only ordinary probabilities using these three axioms, then $Q$ is identifiable. If $Q$ cannot be reduced in terms of ordinary probabilities using these three axioms, then $Q$ is unidentifiable. The axioms are as powerful as can be.
+
+\begin{defn}[Recursiveness] \label{def:recursiveness}
+Let $X$ and $Y$ be singleton variables in a model, and let $X \rightarrow Y$ stand for the inequality $Y_{xw}(u) \neq Y_w(u)$ for some values of $x$, $w$, and $u$. A model $M$ is recursive if, for any sequence $X_1, X_2, ..., X_k$, we have
+\begin{equation}
+X_1 \rightarrow X_2,\ X_2 \rightarrow X_3,\ ...,\ X_{k-1} \rightarrow X_k \implies X_k \nrightarrow X_1
+\end{equation}
+\end{defn}
+
+Properties \ref{prop:composition}, \ref{prop:effectiveness}, and Defn.~\ref{def:recursiveness} are complete: i.e. in a recursive system, only composition and effectiveness are needed to derive all causal statements.
+
 
 \section{Software}
 
