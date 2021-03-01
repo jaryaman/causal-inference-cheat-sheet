@@ -77,6 +77,7 @@
 \newtheorem{defn}{Definition}[section]
 \newtheorem{cor}{Corollary}[section]
 \newtheorem{prop}{Property}[section]
+\newtheorem{rle}{Rule}[section]
 
 %Preamble end--------------------------------------------------
 
@@ -345,30 +346,30 @@ The back-door and front-door criteria do not provide a complete set of rules for
 
 \subsection{Rules} \label{sec:Rules}
 
-\begin{thm}[Rule 1: Insertion/deletion of observations] 
+\begin{rle}[Insertion/deletion of observations] 
 \begin{equation}
 P(y|\hat{x}, z, w) = P(y| \hat{x}, w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X}}}}.
-\end{equation} \label{thm:do-calc-ins-del-obs}
-\end{thm}
+\end{equation} \label{rle:do-calc-ins-del-obs}
+\end{rle}
 
-Theorem~\ref{thm:do-calc-ins-del-obs} is a reaffirmation of $d$-separation (Section~\ref{sec:blocking}) as a valid test for conditional independence in the distribution resulting from $do(X=x)$. The rule follows from the fact that deleting equations from the system ($G_{{\overline{X}}}$) does not introduce any dependencies among the remaining disturbance terms.
+Rule~\ref{rle:do-calc-ins-del-obs} is a reaffirmation of $d$-separation (Section~\ref{sec:blocking}) as a valid test for conditional independence in the distribution resulting from $do(X=x)$. The rule follows from the fact that deleting equations from the system ($G_{{\overline{X}}}$) does not introduce any dependencies among the remaining disturbance terms.
 
-\begin{thm}[Rule 2: Action/observation exchange]
+\begin{rle}[Action/observation exchange]
 \begin{equation}
 P(y|\hat{x},\hat{z},w) = P(y|\hat{x},z,w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X}\underline{Z}}}}.
-\end{equation}  \label{thm:do-calc-act-obs-ex}
-\end{thm}
+\end{equation}  \label{rle:do-calc-act-obs-ex}
+\end{rle}
 
-Theorem~\ref{thm:do-calc-act-obs-ex} provides a condition for an external intervention $do(Z=z)$ to have the same effect on $Y$ as the passive observation $Z=z$. The condition amounts to $\{X \cup W\}$ blocking all back-door paths from $Z$ to $Y$ (in $G_{\overline{X}}$), since $G_{\overline{X}\underline{Z}}$ retains all (and only) such paths.
+Rule~\ref{rle:do-calc-act-obs-ex} provides a condition for an external intervention $do(Z=z)$ to have the same effect on $Y$ as the passive observation $Z=z$. The condition amounts to $\{X \cup W\}$ blocking all back-door paths from $Z$ to $Y$ (in $G_{\overline{X}}$), since $G_{\overline{X}\underline{Z}}$ retains all (and only) such paths.
 
-\begin{thm}[Rule 3: Insertion/deletion of actions] 
+\begin{rle}[Insertion/deletion of actions] 
 \begin{equation}
 P(y|\hat{x},\hat{z},w) = P(y|\hat{x},w) \quad \text{if}\ (Y \indep Z|X,W)_{G_{{\overline{X},\overline{Z(W)}}}}
-\end{equation}  \label{thm:do-calc-ins-del-act}
+\end{equation}  \label{rle:do-calc-ins-del-act}
 where $Z(W)$ is the set of $Z$-nodes that are not ancestors of any $W$-node in $G_{\overline{X}}$.
-\end{thm}
+\end{rle}
 
-Theorem~\ref{thm:do-calc-ins-del-act} provides conditions for introducing (or deleting) an external intervention $do(Z=z)$ without affecting the probability of $Y=y$. The validity of this rule stems from simulating the intervention $do(Z=z)$ by the deletion of all equations corresponding to the variables in $Z$ (hence $G_{\overline{X} \overline{Z}}$).
+Rule~\ref{rle:do-calc-ins-del-act} provides conditions for introducing (or deleting) an external intervention $do(Z=z)$ without affecting the probability of $Y=y$. The validity of this rule stems from simulating the intervention $do(Z=z)$ by the deletion of all equations corresponding to the variables in $Z$ (hence $G_{\overline{X} \overline{Z}}$).
 
 \paragraph{Completeness} A quantity $Q=P(y|do(x),z)$ is identifiable if and only if it can be reduced to a \textit{do}-free expression using the above 3 rules.
 
@@ -957,6 +958,26 @@ X_1 \rightarrow X_2,\ X_2 \rightarrow X_3,\ ...,\ X_{k-1} \rightarrow X_k \impli
 
 Properties \ref{prop:composition}, \ref{prop:effectiveness}, and Defn.~\ref{def:recursiveness} are complete: i.e. in a recursive system, only composition and effectiveness are needed to derive all causal statements.
 
+
+\subsection{Rules of inference with counterfactuals (potential outcomes framework)}
+
+The following two rules can be used to systematically derive any causal statement.
+\begin{rle}[Exclusion restrictions] \label{rle:exclusion-restriction}
+For every variable $Y$ having parents $PA_Y$ and for every set of variables $Z \subset V$ disjoint of $PA_Y$, we have
+\begin{equation}
+Y_{pa_Y}(u) = Y_{pa_Y, z}(u)
+\end{equation}
+\end{rle} 
+Rule~\ref{rle:exclusion-restriction} reflects the insensitivity of $Y$ to any manipulation in $V$, once its direct causes $PA_Y$ are held constant.
+
+\begin{rle}[Independence restrictions]\label{rle:independence-restriction}
+If $Z_1, ..., Z_k$ is any set of nodes in $V$ not connected to $Y$ via paths containing only $U$ variables, we have
+\begin{equation}
+Y_{pa_Y} \indep \{Z_{1_{pa_{Z_1}}}, ..., Z_{k_{pa_{Z_k}}}\} \label{eq:independence-restriction}
+\end{equation}
+where $Z_{i_{pa_{Z_i}}}$ is the potential response of the variable $Z_i$ to setting the parents of $Z_i$ to the value $pa_{Z_i}$. Equivalently, Eq.~\ref{eq:independence-restriction} holds if the corresponding $U$ terms $(U_{Z_1}, ..., U_{Z_k})$ are jointly independent of $U_Y$.
+\end{rle}
+Rule~\ref{rle:independence-restriction} interprets independencies among $U$ variables as independencies between the counterfactuals of the corresponding $V$ variables. This is because, since $Y=f_y(pa_Y, u_Y)$, holding $PA_Y$ fixed means that the residual variations of $Y$ are entirely governed by variations in $U_Y$.
 
 \section{Software}
 
