@@ -959,9 +959,9 @@ X_1 \rightarrow X_2,\ X_2 \rightarrow X_3,\ ...,\ X_{k-1} \rightarrow X_k \impli
 Properties \ref{prop:composition}, \ref{prop:effectiveness}, and Defn.~\ref{def:recursiveness} are complete: i.e. in a recursive system, only composition and effectiveness are needed to derive all causal statements.
 
 
-\subsection{Rules of inference with counterfactuals (potential outcomes framework)}
+\subsubsection{Rules of inference with counterfactuals (potential outcomes framework)}
 
-The following two rules can be used to systematically derive any causal statement.
+The following two rules can be used to embody recursiveness
 \begin{rle}[Exclusion restrictions] \label{rle:exclusion-restriction}
 For every variable $Y$ having parents $PA_Y$ and for every set of variables $Z \subset V$ disjoint of $PA_Y$, we have
 \begin{equation}
@@ -978,6 +978,8 @@ Y_{pa_Y} \indep \{Z_{1_{pa_{Z_1}}}, ..., Z_{k_{pa_{Z_k}}}\} \label{eq:independen
 where $Z_{i_{pa_{Z_i}}}$ is the potential response of the variable $Z_i$ to setting the parents of $Z_i$ to the value $pa_{Z_i}$. Equivalently, Eq.~\ref{eq:independence-restriction} holds if the corresponding $U$ terms $(U_{Z_1}, ..., U_{Z_k})$ are jointly independent of $U_Y$.
 \end{rle}
 Rule~\ref{rle:independence-restriction} interprets independencies among $U$ variables as independencies between the counterfactuals of the corresponding $V$ variables. This is because, since $Y=f_y(pa_Y, u_Y)$, holding $PA_Y$ fixed means that the residual variations of $Y$ are entirely governed by variations in $U_Y$.
+
+Using Rules~\ref{rle:exclusion-restriction}, \ref{rle:independence-restriction}, and Properties~\ref{prop:composition} and \ref{prop:effectiveness}, can be used to compute any causal query in a DAG.
 
 \section{Software}
 
