@@ -981,6 +981,47 @@ Rule~\ref{rle:independence-restriction} interprets independencies among $U$ vari
 
 Using Rules~\ref{rle:exclusion-restriction}, \ref{rle:independence-restriction}, and Properties~\ref{prop:composition} and \ref{prop:effectiveness}, can be used to compute any causal query in a DAG.
 
+\subsubsection{Causal relevance}
+Causal relevance is concerned with questions of the form: ``Given that $Z$ is fixed, wold changing $X$ alter $Y$?''. Causal relevance can be useful when exact causal models do not exist, but constraints about the lack of influence of certain variables on others are known.
+
+\begin{defn}[Causal irrelevance]
+A variable $X$ is causally irrelevant to $Y$, given $Z$ (written $X \nrightarrow Y|Z$) if, for every set $W$ disjoint of $X \cup Y \cup Z$, we have
+\begin{equation}
+\forall (u, z, x, x', w), \quad Y_{xzw}(u) = Y_{x'zw}(u)
+\end{equation}
+where $x$ and $x'$ are two distinct values of $X$.
+\end{defn}
+
+\begin{thm}
+For any causal model, the following sentences must hold.
+
+Weak Right Decomposition:
+\begin{equation}
+(X \nrightarrow YW|Z)\ \&\ (X \nrightarrow Y| ZW) \implies (X \nrightarrow Y|Z)
+\end{equation}
+
+Left Decomposition:
+\begin{equation}
+(XW \nrightarrow Y| Z) \implies (X \nrightarrow Y | Z)\ \&\ (W \nrightarrow Y | Z)
+\end{equation}
+
+Strong Union:
+\begin{equation}
+(X \nrightarrow Y | Z) \implies (X \nrightarrow Y|ZW)\ \forall W
+\end{equation} 
+
+Right Intersection:
+\begin{equation}
+(X \nrightarrow Y|ZW)\ \&\ (X \nrightarrow W| ZY) \implies (X \nrightarrow YW|Z)
+\end{equation}
+
+Left Intersection:
+\begin{equation}
+(X \nrightarrow Y| ZW)\ \&\ (W \nrightarrow Y | ZX) \implies (XW \nrightarrow Y| Z)
+\end{equation}
+where $(X \nrightarrow Y| Z)_G$ has the interpretation that every directed path from $X$ to $Y$ in a directed graph $G$ contains at least on node in $Z$.
+\end{thm}
+
 \section{Software}
 
 \subsection{Tetrad}
