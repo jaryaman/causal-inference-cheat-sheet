@@ -945,7 +945,7 @@ For any two variables $Y$ and $W$, and any set of variables $X$
 (Y_{xw}(u)=y)\ \&\ (W_{xy}(u)=w) \implies Y_x(u)=y
 \end{equation}
 \end{prop}
-Reversibility precludes multiple solutions due to feedback loops. If setting $W$ to a value $w$ results in a value $y$ for $Y$, and if setting $Y$ to the value $y$ results in $W$ achieving the value $w$, then $W$ and $Y$ will naturally obtain the values $w$ and $y$, without any external setting. This holds for all fixed conditions $do(X=x)$.
+Reversibility precludes multiple solutions due to feedback loops. If setting $W$ to a value $w$ results in a value $y$ for $Y$, and if setting $Y$ to the value $y$ results in $W$ achieving the value $w$, then $W$ and $Y$ will naturally obtain the values $w$ and $y$, without any external setting. This holds for all fixed conditions $do(X=x)$. Reversibility, as an axiom, is only required for non-recursive systems (see Defn.~\ref{def:recursiveness} below): i.e.\ directed acyclic graphs only need composition and effectiveness to certify all truth statements.
 
 Properties \ref{prop:composition}, \ref{prop:effectiveness}, and \ref{prop:reversibility} hold in all causal models -- they are necessary and sufficient axioms for all causal statements. In other words, if we can reduce a counterfactual quantity $Q$ into an expression that involves only ordinary probabilities using these three axioms, then $Q$ is identifiable. If $Q$ cannot be reduced in terms of ordinary probabilities using these three axioms, then $Q$ is unidentifiable. The axioms are as powerful as can be.
 
@@ -956,7 +956,7 @@ X_1 \rightarrow X_2,\ X_2 \rightarrow X_3,\ ...,\ X_{k-1} \rightarrow X_k \impli
 \end{equation}
 \end{defn}
 
-Properties \ref{prop:composition}, \ref{prop:effectiveness}, and Defn.~\ref{def:recursiveness} are complete: i.e. in a recursive system, only composition and effectiveness are needed to derive all causal statements.
+Properties \ref{prop:composition}, \ref{prop:effectiveness}, and Defn.~\ref{def:recursiveness} are complete: i.e. in a recursive system, only composition and effectiveness are needed to derive all causal statements. Property~\ref{prop:reversibility} is only required in non-recursive systems.
 
 
 \subsubsection{Rules of inference with counterfactuals (potential outcomes framework)}
