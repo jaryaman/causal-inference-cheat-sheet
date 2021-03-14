@@ -560,7 +560,7 @@ where $S_{XY}$ stands for (any setting of) all variables in the model excluding 
 
 Note that \textbf{selection bias} can arise when two uncorrelated factors have a common effect that is omitted from the analysis but influences the selection of samples for the study, see Fig.~\ref{Fig:selection-bias}. Hence bidirected arcs should be assumed to exist, by default, between any two nodes in a diagram -- since they at worst compromise the identifiability of model parameters. They should be deleted only by well-motivated justifications, such as the unlikely existence of a common cause, and the unlikely existence of selection bias.
 
-\subsection{Exogeneity and instrumental variables}
+\subsection{Exogeneity} \label{sec:exogeneity}
 
 \begin{defn}[General Exogeneity]
 Let $X$ and $Y$ be two sets of variables, and let $\lambda$ be any quantity which may be computed from a structural model $M$ (structural, statistical, etc.) in a theory $T$. We say that $X$ is exogenous relative to $(Y, \lambda ,T)$ if $\lambda$ is identifiable from the conditional distribution of $P(y|x)$, that is, if
@@ -570,7 +570,30 @@ P_{M_1}(y|x) = P_{M_2}(y|x) \implies \lambda(M_1) = \lambda(M_2)
 for any two models $M_1$ and $M_2$ satisfying theory $T$. \label{def:general-exog}
 \end{defn}
 
+The following three alternative definitions of exogeneity are also sometimes given, but are not generally equivalent when we cannot assume stability. In order of decreasing strength:
+\begin{defn}[Graphical criterion for exogeneity]
+A variable $X$ is exogenous in model $M$ relative to $Y$ if $X$ and $Y$ have no common ancestor in $G(M)$ or, equivalently, if all back-door paths between $X$ and $Y$ are blocked (by colliding arrows). ``Common ancestors'' should exclude nodes that have no other connection to $Y$ except through $X$, but should include latent nodes for every pair of dependent errors.
+\end{defn}
+\begin{defn}[Error-based criterion for exogeneity]
+A variable $X$ is exogenous in model $M$ relative to $Y$ if $X$ is independent of all error terms ($U$ in Defn.~\ref{defn:struct-causal-model}) that have an influence on $Y$ when $X$ is held constant. I.e. A variable $X$ is exogenous relative to $\lambda=P(y|do(x))$ if $X$ is independent of all errors $U$ that influence $Y$, except those mediated by $X$.
+\end{defn}
+\begin{defn}[Empirical criterion for exogeneity]
+A variable $X$ is exogenous relative to $Y$ if and only if 
+\begin{equation}
+P(Y_x=y)=P(y|x)
+\end{equation}
+(see Section~\ref{sec:counterfactual-defs} for definitions of counterfactuals), or equivalently
+\begin{equation}
+P(Y=y|do(x))=P(y|x)
+\end{equation}
+\end{defn}
+\noindent where
+\begin{equation}
+\text{graphical criterion} \implies \text{error-based criterion} \implies \text{counterfactual criterion}.
+\end{equation}
+However, if we assume stability, then the three definitions coincide.
 
+\subsection{Instrumental variables}
 \begin{defn}[Instrumental variable]
 For the parameter $\lambda = P(w|do(z))$ where $W$ and $Z$ are two sets of variables in $Y$, then if $X$ is exogenous relative to $(Y, \lambda, T)$ then
 \begin{equation}
@@ -583,10 +606,10 @@ for any two models $M_1$ and $M_2$ satisfying theory $T$. Under these conditions
 If $X$ is an instrumental variable for $P(w|do(z))$, then $P(w|do(z))$ is identifiable from $P(z,w|x)$. I.e. $X$ renders a causal effect $P(w|do(z))$ identifiable which $X$ itself does not directly participate in.
 \end{cor}
 
-An alternative definition of exogeneity may also be given, in terms of the correlation between errors and variables:
-\begin{defn}[Error-based exogeneity]
-A variable $X$ is exogenous relative to $\lambda=P(y|do(x))$ if $X$ is independent of all errors $\epsilon$ that influence $Y$, except those mediated by $X$. 
-\end{defn}
+As with section~\ref{sec:exogeneity}, we can define a three-level hierarchy to characterize the notion of instrumental variables.
+
+
+
 
 \subsection{Linear structural equation models}
 
@@ -787,7 +810,7 @@ E_z g[P(x,y|z)] = g[P(x,y)]
 If $g$ stands for any linear functional of $P(y|x)$, such as the risk difference $P(y|x_1) - P(y|x_2)$, then collapsibility holds whenever $Z \indep X$ or $Z \indep Y| X$. Hence, any violation of collapsibility implies violation of the two statistical conditions in Theorem~\ref{thm:no-conf-criterion}. So whilst collapsibility is linked to confounding, in the absence of the assumptions $A_z$, collapsibility is neither necessary nor sufficient.
 
 \section{Structure-based counterfactuals}
-\subsection{Definitions}
+\subsection{Definitions}\label{sec:counterfactual-defs}
 Let's begin by writing Eq.\eqref{eq:func-caus-mod} more formally:
 
 \begin{defn}[Structural Causal Model] \label{defn:struct-causal-model}
@@ -797,7 +820,7 @@ M = \langle U, V, F \rangle \nonumber
 \end{equation}
 where
 \begin{enumerate}[noitemsep]
-\item $U$ is a set of background (exogenous) variables, that are determined by factors outside the model;
+\item $U$ is a set of background (exogenous, or error) variables, that are determined by factors outside the model;
 \item $V$ is a set $\{V_1, V_2,..., V_n \}$ of (endogenous) variables, that are determined by variables in the model -- that is, variables in $U \cup V$; and
 \item $F$ is a set of functions $\{f_1, f_2,...,f_n \}$ such that each $f_i$ is a mapping from (the respective domains of) $U_i \cup PA_i$, where $U_i \subseteq U$ and $PA_i \subseteq V \setminus V_i$ and the entire set $F$ forms a mapping from $U$ to $V$. In other words, each $f_i$ in
 \begin{equation}
