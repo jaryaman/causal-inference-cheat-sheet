@@ -40,6 +40,7 @@
 \renewcommand{\familydefault}{\sfdefault}
 
 \newcommand\indep{\protect\mathpalette{\protect\independenT}{\perp}}
+\newcommand{\nindep}{\not\!\perp\!\!\!\perp}
 \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
 
 %PUT ME LAST--------------------------------------------------
@@ -606,9 +607,22 @@ for any two models $M_1$ and $M_2$ satisfying theory $T$. Under these conditions
 If $X$ is an instrumental variable for $P(w|do(z))$, then $P(w|do(z))$ is identifiable from $P(z,w|x)$. I.e. $X$ renders a causal effect $P(w|do(z))$ identifiable which $X$ itself does not directly participate in.
 \end{cor}
 
-As with section~\ref{sec:exogeneity}, we can define a three-level hierarchy to characterize the notion of instrumental variables.
-
-
+As in the case of exogeneity, we can provide graphical and counterfactual criteria for instrumental variables
+\begin{defn}[Criteria for instrumental variables]
+A variable $Z$ is an instrument relative to the total effect of $X$ on $Y$ if there exists a set of measurements $S=s$ (i.e. joint observations for $X$, $Y$, and $Z$? \textbf{[TODO: Confirm?]}), unaffected by $X$, such that either of the following criteria holds
+\begin{enumerate}
+\item \textbf{Counterfactual} criterion
+\begin{enumerate}
+\item $Z \indep Y_x | S=s$
+\item $Z \nindep X|S=s$
+\end{enumerate}
+\item \textbf{Graphical} criterion
+\begin{enumerate}
+\item $(Z \indep Y|S)_{G_{\bar{X}}}$
+\item $(Z \nindep X|S)_G$
+\end{enumerate}
+\end{enumerate} 
+\end{defn}
 
 
 \subsection{Linear structural equation models}
