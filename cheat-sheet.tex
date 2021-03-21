@@ -1059,6 +1059,32 @@ Left Intersection:
 where $(X \nrightarrow Y| Z)_G$ has the interpretation that every directed path from $X$ to $Y$ in a directed graph $G$ contains at least on node in $Z$.
 \end{thm}
 
+\section{Imperfect experiments: bounding causal effects and counterfactuals}
+It is not always possible to conduct perfect randomized clinical trials, for e.g. ethical or pragmatic reasons. Sometimes, we must admit a latent common cause ($U$) of the treatment a patient actually receives ($X$) and the outcome for that patient ($Y$). We have seen above that, in such a graph $X \leftarrow U \rightarrow Y$, $P(y|do(x))$ is unidentifiable. However, we may consider an instrumental variable $Z \rightarrow X$, which may count as e.g. a physician's encouragement to participate in a particular way in the study, see Fig.~\ref{Fig:partial-compliance-instrument}. If $Z$ is assigned randomly, then we will be able to form bounds (as opposed to precise point-estimates) on $P(y|do(x))$.
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.4\columnwidth]{figures/partial-compliance-instrument.png}  
+\end{center}
+\caption{\textbf{A randomized clinical trial with partial compliance and an instrumental variable}. We cannot always conduct perfectly randomized clinical trials. We may bound causal effects by using an instrumental variable, such as treatment assigned.}
+\label{Fig:partial-compliance-instrument}
+\end{figure}
+
+Let $X$, $Y$, and $Z$ be binary random variables and the subscript $i$ denote an outcome for the corresponding variable, where $i \in \{0,1\}$.
+\begin{defn}[Average causal effect]
+The average causal effect $\text{ACE}(X\rightarrow Y)$ is defined as
+\begin{equation}
+\text{ACE}(X\rightarrow Y) = P(y_1|do(x_1)) - P(y_1|do(x_0))
+\end{equation}
+\end{defn}
+
+Using Rule~\ref{rle:do-calc-act-obs-ex} of do-calculus,
+\begin{equation}
+\text{ACE}(X\rightarrow Y) = \sum_u [P(y_1|x_1, u) - P(y_1|x_0,u)]P(u). \label{eq:ace-instrument}
+\end{equation}
+We seek to perform a constrained optimization of finding the highest and lowest values of Eq.~\eqref{eq:ace-instrument}, in terms of the observed probabilities $P(y,x|z_0)$ and $P(y,x|z_1)$. 
+
 \section{Software}
 
 \subsection{Tetrad}
