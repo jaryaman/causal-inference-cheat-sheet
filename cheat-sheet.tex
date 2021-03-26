@@ -1060,16 +1060,18 @@ where $(X \nrightarrow Y| Z)_G$ has the interpretation that every directed path 
 \end{thm}
 
 \section{Imperfect experiments: bounding causal effects and counterfactuals}
-It is not always possible to conduct perfect randomized clinical trials, for e.g. ethical or pragmatic reasons. Sometimes, we must admit a latent common cause ($U$) of the treatment a patient actually receives ($X$) and the outcome for that patient ($Y$). We have seen above that, in such a graph $X \leftarrow U \rightarrow Y$, $P(y|do(x))$ is unidentifiable. However, we may consider an instrumental variable $Z \rightarrow X$, which may count as e.g. a physician's encouragement to participate in a particular way in the study, see Fig.~\ref{Fig:partial-compliance-instrument}. If $Z$ is assigned randomly, then we will be able to form bounds (as opposed to precise point-estimates) on $P(y|do(x))$.
+It is not always possible to conduct perfect randomized clinical trials, for e.g. ethical or pragmatic reasons. Sometimes, we must admit a latent common cause ($U$) of the treatment a patient actually receives ($X$) and the outcome for that patient ($Y$). We have seen above that, in such a graph $X \leftarrow U \rightarrow Y$, $P(y|do(x))$ is unidentifiable. However, we may consider an instrumental variable $Z \rightarrow X$, which may count as e.g. a physician's encouragement to participate in a particular way in the study, see Fig.~\ref{Fig:partial-compliance-instrument}A. If $Z$ is assigned randomly, then we will be able to form bounds (as opposed to precise point-estimates) on $P(y|do(x))$.
 
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=0.4\columnwidth]{figures/partial-compliance-instrument.png}  
+\includegraphics[width=0.8\columnwidth]{figures/partial-compliance-instrument.png}  
 \end{center}
-\caption{\textbf{A randomized clinical trial with partial compliance and an instrumental variable}. We cannot always conduct perfectly randomized clinical trials. We may bound causal effects by using an instrumental variable, such as treatment assigned.}
+\caption{\textbf{A randomized clinical trial with partial compliance and an instrumental variable}. A. We cannot always conduct perfectly randomized clinical trials. We may bound causal effects by using an instrumental variable, such as treatment assigned. B. For binary $X$, $Y$, and $Z$, (B) is equivalent to (A), which uses finite-state response variables $R_x$, $R_y$, and $R_z$. $R_x$ and $R_y$ substitute $U$ and may, in general, be dependent.}
 \label{Fig:partial-compliance-instrument}
 \end{figure}
+
+\subsection{Average causal effect}
 
 Let $X$, $Y$, and $Z$ be binary random variables and the subscript $i$ denote an outcome for the corresponding variable, where $i \in \{0,1\}$.
 \begin{defn}[Average causal effect]
@@ -1084,6 +1086,62 @@ Using Rule~\ref{rle:do-calc-act-obs-ex} of do-calculus,
 \text{ACE}(X\rightarrow Y) = \sum_u [P(y_1|x_1, u) - P(y_1|x_0,u)]P(u). \label{eq:ace-instrument}
 \end{equation}
 We seek to perform a constrained optimization of finding the highest and lowest values of Eq.~\eqref{eq:ace-instrument}, in terms of the observed probabilities $P(y,x|z_0)$ and $P(y,x|z_1)$. 
+
+\subsection{Canonical partitions}
+No matter the form of $y=f(x,u)$, since $Y$ and $X$ are binary, we can always partition the domain of $U$ into four equivalence classes
+\begin{align}
+f_0: y=0,\quad f_1: y=x \\
+f_1: y = \neg x, \quad f_2: y=1. \nonumber
+\end{align}
+Therefore for any $P(u)$ there exists a $P(r),\ r=0, 1, 2, 3$ which is given by the total weight assigned to the equivalence class corresponding to $f_r$. Since $X$, $Y$ and $Z$ are all binary variables, the state space of $U$ divides into $4\times 2 + 4\times 2 = 16$ equivalence classes, since $U$ affects both $X$ and $Y$. For convenience, we can split the state space into two four-valued variables $R_x$ and $R_y$. We can then write, e.g.
+\begin{equation}
+x=f_X(z,r_x)=\begin{cases}
+x_0& \text{if}\ r_x=0;\\
+x_0& \text{if}\ r_x=1\ \text{and}\ z=z_0;\\
+x_1& \text{if}\ r_x=1\ \text{and}\ z=z_1;\\
+x_1& \text{if}\ r_x=2\ \text{and}\ z=z_0;\\
+x_0& \text{if}\ r_x=2\ \text{and}\ z=z_1;\\
+x_1& \text{if}\ r_x=3.
+\end{cases}
+\end{equation}
+We can call subjects with compliance behaviour $r_x=0, 1, 2, 3$ as \textit{never-taker}, \textit{complier}, \textit{defier}, and \textit{always-taker}. We can define a similar mapping for $y=f_Y(x,r_y)$ with $r_y=0, 1, 2, 3$ corresponding to \textit{never-recover}, \textit{helped}, \textit{hurt}, and \textit{always-recover} (see Fig.~\ref{Fig:partial-compliance-instrument}B). The counterfactual $Y_{x_0}$ may be written as
+\begin{equation}
+Y_{x_0} = \begin{cases}
+y_1& \text{if}\ r_y=2\ \text{or}\ r_y=3, \\
+y_0& \text{otherwise}
+\end{cases}
+\end{equation}
+and similar for $Y_{x_1}$. Hence,
+\begin{equation}
+P(y_1|do(x_0))=P(r_y=2) + P(r_3=3).
+\end{equation}
+Given the definition of ACE in Eq.\eqref{eq:ace-instrument}, the conditional distribution $P(y,x|z)$, and the probabilistic constraints that $\sum_{x,y}P(x,y|z_0)=\sum_{x,y}P(x,y|z_1)=1$, one may write down $ACE(X\rightarrow Y)$ as a linear programming problem, where we seek to minimize/maximize $ACE$ given the constraints (for details see Section 8.2.3 of \cite{pearl09}). The \textbf{natural bound} yields a less tight bound, which is simpler in its form (see Section 8.2.4 of \cite{pearl09}). The width of the natural bounds is given by the rate of noncompliance: $P(x_1|z_0) + P(x_0|z_1)$. Natural bounds are optimal when no patient is a contrarian. Note that if the variables are continuous, then dichotomized variables can be defined.
+
+\subsection{Effect of treatment on the treated}
+ETT is useful when we want to know the impact of the treatment \textit{on the treated}, for e.g. deciding whether to maintain/terminate a program. It is defined as 
+\begin{equation}
+ETT(X \rightarrow Y) \defeq P(Y_{x_1}=y_1|x_1) - P(Y_{x_0}=y_1|x_1).
+\end{equation}
+
+For the same DAG as Fig.~\ref{Fig:partial-compliance-instrument}, bounds may be derived through a similar means as the above (see \citep{pearl09}). Under conditions of \textit{no intrusion} (i.e.\ $P(x_1|z_0)=0$), $ETT(X \rightarrow Y)$ can be identified precisely, and is
+\begin{equation}
+ETT(X\rightarrow Y) = \frac{P(y_1|z_1) - P(y_1|z_0)}{P(x_1|z_1)}.
+\end{equation}
+
+\subsection{Test for instruments}
+Casting the estimation of $ACE(X\rightarrow Y)$ as a linear programming problem can allow us to derive tests for whether a variable $Z$ is a plausible instrumental variable: i.e. a variable which is exogenous relative to $P(y|do(x))$. The following inequalities follow, by asserting that the upper bound of $ACE$ is greater than the lower bound
+\begin{align}
+P(y_0, x_0|z_0) + P(y_1, x_0| z_1) &\leq 1, \nonumber \\
+P(y_0, x_1|z_0) + P(y_1, x_1| z_1) &\leq 1, \nonumber \\
+P(y_1, x_0|z_0) + P(y_0, x_0| z_1) &\leq 1, \nonumber \\
+P(y_1, x_1|z_0) + P(y_0, x_1| z_1) &\leq 1.
+\end{align}
+Violation of any of these inequalities implies that $Z$ cannot be an instrumental variable. This is not guaranteed to screen out all violations of exogeneity, but may still be useful. Generalizations for multivalued, and continuous $Z$ or $Y$ are
+\begin{align}
+\max_x \sum_y [\max_z P(y, x|z)] \leq 1 \\
+\int_y \max_z[f(y|x,z)P(x|z)] dy \leq 1\ \forall x
+\end{align}
+respectively. These are called the \textbf{instrumental inequality}. Interestingly, for continuous $X$, Fig.~\ref{Fig:partial-compliance-instrument} places no constraint on the observed density whatsoever.
 
 \section{Software}
 
