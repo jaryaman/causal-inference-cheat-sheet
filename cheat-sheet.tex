@@ -79,6 +79,7 @@
 \newtheorem{cor}{Corollary}[section]
 \newtheorem{prop}{Property}[section]
 \newtheorem{rle}{Rule}[section]
+\newtheorem{lma}{Lemma}[section]
 
 %Preamble end--------------------------------------------------
 
@@ -1117,6 +1118,8 @@ P(y_1|do(x_0))=P(r_y=2) + P(r_3=3).
 \end{equation}
 Given the definition of ACE in Eq.\eqref{eq:ace-instrument}, the conditional distribution $P(y,x|z)$, and the probabilistic constraints that $\sum_{x,y}P(x,y|z_0)=\sum_{x,y}P(x,y|z_1)=1$, one may write down $ACE(X\rightarrow Y)$ as a linear programming problem, where we seek to minimize/maximize $ACE$ given the constraints (for details see Section 8.2.3 of \cite{pearl09}). The \textbf{natural bound} yields a less tight bound, which is simpler in its form (see Section 8.2.4 of \cite{pearl09}). The width of the natural bounds is given by the rate of noncompliance: $P(x_1|z_0) + P(x_0|z_1)$. Natural bounds are optimal when no patient is a contrarian. Note that if the variables are continuous, then dichotomized variables can be defined.
 
+Gibbs sampling can be used to infer the distribution of the average causal effect in this system by representing the joint distribution of $(r_x, r_y)$ with a vector of length 16 denoting the probability of occupying each of the 16 possible subpopulations \citep{Chickering97}.
+
 \subsection{Effect of treatment on the treated}
 ETT is useful when we want to know the impact of the treatment \textit{on the treated}, for e.g. deciding whether to maintain/terminate a program. It is defined as 
 \begin{equation}
@@ -1142,6 +1145,52 @@ Violation of any of these inequalities implies that $Z$ cannot be an instrumenta
 \int_y \max_z[f(y|x,z)P(x|z)] dy \leq 1\ \forall x
 \end{align}
 respectively. These are called the \textbf{instrumental inequality}. Interestingly, for continuous $X$, Fig.~\ref{Fig:partial-compliance-instrument} places no constraint on the observed density whatsoever.
+
+\section{Probability of causation: Interpretation and Identification}
+
+\begin{defn}[Probability of Necessity, PN]
+Let $X$ and $Y$ be two binary variables in a causal model $M$. Let $x$ and $y$ stand (respectively) for the propositions $X=$ true and $Y=$ true, and $x'$ and $y'$ denote their complements. The probability of necessity is defined as the expression
+\begin{equation}
+\text{PN} \defeq P(Y_{x'}=\text{false}\ | X=\text{true}, Y=\text{true}) \defeq P(y'_{x'}|x,y).
+\end{equation}
+\end{defn}
+\noindent i.e.\ PN stands for the probability that $y$ would not have occurred if $x$ had not occurred, given that $x$ and $y$ did in fact occur. Note the slight change of notation where $y_x \iff Y_x=\text{true}$.
+
+\begin{defn}[Probability of Sufficiency, PS]
+\begin{equation}
+\text{PS} \defeq P(y_x|y',x')
+\end{equation}
+\end{defn}
+\noindent i.e.\ PS stands for the probability that $y$ would have happened if $x$ had occurred, given that neither $x$ nor $y$ did in fact occur. PS measures the capacity of $x$ to \textit{produce} $y$, and since ``production'' implies a transition from the absence to the presence of $x$ and $y$, we condition on $x'$ and $y'$.
+
+\begin{defn}[Probability of Necessity and Sufficiency, PNS]
+\begin{equation}
+\text{PNS} \defeq P(y_x, y'_{x'})
+\end{equation}
+\end{defn}
+\noindent i.e.\ PNS stands for the probability that $y$ would respond to $x$ in both ways, and therefore measures both necessity and sufficiency of $x$ to produce $y$.
+
+\begin{defn}[Probability of Disablement, PD]
+\begin{equation}
+PD \defeq P(y'_{x'}|y)
+\end{equation}
+\end{defn}
+\noindent i.e.\ PD measures the probability that $y$ would have been prevented if it were not for $x$.
+
+\begin{defn}[Probability of Enablement, PE]
+\begin{equation}
+PE \defeq P(y_x|y')
+\end{equation}
+\end{defn}
+\noindent i.e.\ PE measures the probability that $y$ would have happened if $x$ were the case.
+
+None of these quantities are sufficient for deriving the others, but they are not entirely independent.
+
+\begin{lma}
+\begin{equation}
+\text{PNS} = P(x,y)\text{PN} + P(x',y')\text{PS}
+\end{equation}
+\end{lma}
 
 \section{Software}
 
