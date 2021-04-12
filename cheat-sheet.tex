@@ -961,10 +961,10 @@ Y_{\emptyset}(u) \defeq Y(u) \nonumber
 \end{equation}
 \end{defn}
 
-\begin{cor}[Consistency]
+\begin{cor}[Consistency]  
 For any set of variables $Y$ and $X$ in a causal model,
 \begin{equation}
-X(u)=x \implies\ Y(u) = Y_x(u)
+X(u)=x \implies\ Y(u) = Y_x(u) \label{eq:consistency}
 \end{equation}
 \end{cor}
 In other words, if we force variable $X$ to take the value it would have naturally had, then a counterfactual is equivalent to the observational value.
@@ -1148,6 +1148,8 @@ respectively. These are called the \textbf{instrumental inequality}. Interesting
 
 \section{Probability of causation: Interpretation and Identification}
 
+\subsection{Definitions}
+
 \begin{defn}[Probability of Necessity, PN]
 Let $X$ and $Y$ be two binary variables in a causal model $M$. Let $x$ and $y$ stand (respectively) for the propositions $X=$ true and $Y=$ true, and $x'$ and $y'$ denote their complements. The probability of necessity is defined as the expression
 \begin{equation}
@@ -1191,6 +1193,34 @@ None of these quantities are sufficient for deriving the others, but they are no
 \text{PNS} = P(x,y)\text{PN} + P(x',y')\text{PS}
 \end{equation}
 \end{lma}
+
+Since $y$ is assumed to be affected by $x$, and since all of the above quantities involve conditionalization on $y$, none of these quantities is identifiable from knowledge of the causal diagram and the data alone, even under conditions of no-confounding. However, given the assumption of no confounding (\textit{exogeneity}), useful bounds and relationships can be derived.
+
+\subsection{Bounds and relationships under exogeneity}
+
+\begin{defn}[Strong exogeneity]
+A variable $X$ is exogenous (in a strong sense) relative to $Y$ in model $M$ if and only if
+\begin{equation}
+\{Y_x, Y_{x'}\} \indep X
+\end{equation}
+where $\{Y_x, Y_{x'}\}$ is a joint variable. In other words, the way $Y$ would potentially respond to conditions $x$ or $x'$ is independent of the actual value of $X$.
+\end{defn}
+
+Translating the consistency property Eq.\eqref{eq:consistency} into $x \implies (y_x=y)$, then strong exogeneity allows us to write
+\begin{equation}
+P(y_x) = P(y_x|x) = P(y|x) \label{eq:strong-identifiability}
+\end{equation}
+where the first step requires strong exogeneity, and the second uses Eq.\eqref{eq:consistency}. This is also called ``strong identifiability''.
+
+\begin{thm}[Bound for PNS]
+Under strong exogeneity, PNS is bounded as 
+\begin{equation}
+\max[0, P(y|x) - P(y|x')] \leq \text{PNS} \leq min[P(y|x), P(y'|x')]
+\end{equation}
+\end{thm}
+
+Using Eq.~\eqref{eq:strong-identifiability} with the above bound gives bounds on PN and PS.
+
 
 \section{Software}
 
