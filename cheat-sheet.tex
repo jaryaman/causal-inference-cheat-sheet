@@ -150,7 +150,7 @@ x_i = f_i(pa_i, u_i), \quad i=1,...,n \label{eq:func-caus-mod}
 \end{equation}
 where $pa_i$ are the set of variables (parents) that directly determine the value of $X_i$ (i.e.\ its direct causes) and $U_i$ represents errors (or ``disturbances'') due to omitted factors. Eq.\eqref{eq:func-caus-mod} is called a causal model if each equation represents the process by which the \textit{value} (not merely the probability) of variable $X_i$ is selected (see also Definition~\ref{defn:struct-causal-model}).
 
-When some disturbances $U_i$ are judged to be dependent, it is customary to denote such dependencies in a causal graph with double-headed arrows. If the causal diagram is acyclic, then the corresponding model is called \textit{semi-Markovian} and the values of the variables $X$ are uniquely determined by those of the variables $U$. If the error terms $U$ are jointly independent, the model is called \textit{Markovian}.
+When some disturbances $U_i$ are judged to be dependent, it is customary to denote such dependencies in a causal graph with double-headed arrows. If the causal diagram is acyclic, then the corresponding model is called \textit{semi-Markovian} and the values of the variables $X$ are uniquely determined by those of the variables $U$. If the error terms $U$ are jointly independent, the model is called \textit{Markovian} (also known as no confounding).
 
 Linear structural equation models obey
 \begin{equation}
@@ -194,7 +194,7 @@ Given evidence $e=\{X_{obs}, Y_{obs}\}$, to compute probability of $Y=y$ under h
 \item Prediction: Use the modified model to compute the probability $Y=y$.
 \end{enumerate}
 
-\section{Causal Bayesian networks}
+\section{Markovian causal Bayesian networks}
 
 \begin{thm}[Causal Markov condition]
 Every Markovian causal model induces a distribution $P(x_1,...,x_n)$ that satisfies the condition that each variable $X_i$ is independent of all its nondescendants, given its parents $PA_i$
@@ -214,7 +214,7 @@ where $G$ is a gene and $P$ is a protein, and the overset denotes the sign of th
 Given two disjoint sets of variables $X$ and $Y$, the \textbf{causal effect} of $X$ on $Y$, denoted as $P(y|\hat{x})$ or $P(y|do(x))$, is the probability of $Y=y$ by deleting all equations from Eq.\eqref{eq:func-caus-mod} where variables $X$ are on the l.h.s., and substituting $X=x$ in the remaining equations. This corresponds to mutilating the DAG such that all arrows pointing directly to $X$ are removed. \textbf{Amputation is the difference between seeing and doing}.
 \end{defn}
 
-For an atomic intervention, we get the \textit{truncated factorization} formula
+For an atomic intervention, in Markovian models, we get the \textit{truncated factorization} formula
 \begin{equation}
 P(x_1,...,x_n|\hat{x}'_i)=\begin{dcases}
 \prod_{j\neq i} P(x_j|pa_j) \quad &\text{if}\ x_i = x_i'\\
@@ -233,7 +233,7 @@ P(x_1,...,x_n|x_i',pa_i)P(pa_i) \quad &\text{if}\ x_i = x_i'\\
 Marginalization of the above leads to the following theorem.
 
 \begin{thm}[Adjustment for direct causes]
-Let $PA_i$ denote the set of direct causes of variable $X_i$, and let $Y$ be any set of variables disjoint of $\{X_i \cup PA_i \}$. The causal effect of $do(X_i=x_i')$ on $Y$ is
+Let $PA_i$ denote the set of direct causes of variable $X_i$, and let $Y$ be any set of variables disjoint of $\{X_i \cup PA_i \}$ in a Markovian model. The causal effect of $do(X_i=x_i')$ on $Y$ is
 \begin{equation}
 P(y|\hat{x}_i') = \sum_{pa_i} P(y | x'_i, pa_i) P(pa_i)
 \end{equation}
@@ -271,7 +271,7 @@ These algorithms are often point-wise consistent (satisfying assumptions, will c
 \item Spurious association: $X$ and $Y$ are spuriously associated if they are dependent in some context and there exists a latent common cause, as exemplified in the structure $Z_1 \rightarrow X \rightarrow Y \leftarrow Z_2$
 \end{itemize}
 
-\section{Adjusting for confounding bias}
+\section{Adjusting for confounding bias (non-Markovian models)}
 
 When seeking to evaluate the effect of one factor ($X$) on another ($Y$), we should ask \textbf{whether} we should \textit{adjust} for possible variations in other factors ($Z$, known as ``covariates'', ``concomitants'' or ``confounders''). This becomes apparent in \textbf{Simpson's paradox}: any statistical relationship between two variables may be reversed by including additional factors in the analysis (see Section~\ref{sec:simpson-confounding-collapsibility}).
 
@@ -1163,7 +1163,7 @@ Let $X$ and $Y$ be two binary variables in a causal model $M$. Let $x$ and $y$ s
 \text{PS} \defeq P(y_x|y',x')
 \end{equation}
 \end{defn}
-\noindent i.e.\ PS stands for the probability that $y$ would have happened if $x$ had occurred, given that neither $x$ nor $y$ did in fact occur. PS measures the capacity of $x$ to \textit{produce} $y$, and since ``production'' implies a transition from the absence to the presence of $x$ and $y$, we condition on $x'$ and $y'$.
+\noindent i.e.\ PS stands for the probability that $y$ would have happened if $x$ had occurred, given that neither $x$ nor $y$ did in fact occur. PS measures the capacity of $x$ to \textit{produce} $y$, and since ``production'' implies a transition from the absence to the presence of $x$ and $y$, we condition on $x'$ and $y'$. In other words, it is the probability of $x$ causing $y$ in worlds where all other causes of $y$ are suppressed, or a ``causal power'' of $x$ over $y$.
 
 \begin{defn}[Probability of Necessity and Sufficiency, PNS]
 \begin{equation}
@@ -1174,14 +1174,14 @@ Let $X$ and $Y$ be two binary variables in a causal model $M$. Let $x$ and $y$ s
 
 \begin{defn}[Probability of Disablement, PD]
 \begin{equation}
-PD \defeq P(y'_{x'}|y)
+\text{PD} \defeq P(y'_{x'}|y)
 \end{equation}
 \end{defn}
 \noindent i.e.\ PD measures the probability that $y$ would have been prevented if it were not for $x$.
 
 \begin{defn}[Probability of Enablement, PE]
 \begin{equation}
-PE \defeq P(y_x|y')
+\text{PE} \defeq P(y_x|y')
 \end{equation}
 \end{defn}
 \noindent i.e.\ PE measures the probability that $y$ would have happened if $x$ were the case.
@@ -1219,8 +1219,57 @@ Under strong exogeneity, PNS is bounded as
 \end{equation}
 \end{thm}
 
-Using Eq.~\eqref{eq:strong-identifiability} with the above bound gives bounds on PN and PS.
+Using Eq.~\eqref{eq:strong-identifiability} with the above bound gives bounds on PN and PS through the relations
+\begin{align}
+\text{PN}&=\frac{\text{PNS}}{P(y|x)} \label{eq:pn-exog}\\
+\text{PS}&=\frac{\text{PNS}}{P(y'|x')} \label{eq:ps-exog}
+\end{align}
 
+\subsection{Identifiability under monotonicity and exogeneity}
+The special condition of monotonicity expresses the assumption that a change from $X=$ false to $X=$ true cannot, under any circumstances, make $Y$ change from true to false. In epidemiology, this is often expressed as ``no prevention'', that is, no individual in the population can be helped by exposure to the risk factor.
+\begin{defn}[Monotonicity]
+A variable $Y$ is monotonic relative to variable $X$ in a causal model $M$ if and only if 
+\begin{equation}
+y_x' \wedge y_{x'}=\ \text{false}
+\end{equation}
+\end{defn}
+
+\begin{thm}[Identifiability under exogeneity and monotonicity]
+If $X$ is exogenous and $Y$ is monotonic relative to $X$ then the probabilities PN, PS, and PNS are all identifiable and are given by Eq.\eqref{eq:pn-exog} and Eq.\eqref{eq:ps-exog}, along with
+\begin{equation}
+\text{PNS}=P(y|x) - P(y|x') \label{eq:pns-exog-mono}
+\end{equation}
+\end{thm}
+\noindent The RHS of Eq.\eqref{eq:pns-exog-mono} is called ``\textbf{risk difference}''. 
+
+Given the assumptions of monotonicity and exogeneity, PN given by
+\begin{equation}
+\text{PN}=\frac{P(y|x)-P(y|x')}{P(y|x)}
+\end{equation}
+and is called the ``\textbf{excess risk ratio}'', and measures the fraction of exposed cases that are attributable to the exposure. Likewise, PS is given by
+\begin{equation}
+\text{PS}=\frac{P(y|x)-P(y|x')}{1-P(y|x')}
+\end{equation}
+and is called by epidemiologists the ``\textbf{susceptibility}'' of a population to an exposure $x$. It measures the proportion of individuals who possess ``an underlying factor sufficient to make a person contract a disease following exposure''.
+
+\subsection{Identifiability under monotonicity and non-exogeneity}
+Now consider when the effect of $X$ on $Y$ is confounded, i.e. $P(y_x)\neq P(y|x)$. 
+\begin{thm}
+If $Y$ is monotonic relative to $X$, then PNS, PN, and PS are identifiable whenever the causal effects $P(y_x)$ and $P(y_{x'})$ are identifiable
+\begin{align}
+\text{PNS} &= P(y_x)-P(y_{x'}) \\
+\text{PN} &= \frac{P(y)-P(y_{x'})}{P(x,y)} \\
+\text{PS} &= \frac{P(y_x)-P(y)}{P(x',y')} \\
+\end{align}
+\end{thm}
+If we can e.g. perform an experiment to identify $P(y_x)$ and $P(y_{x'})$, then we can access PNS/PN/PS.
+
+\begin{thm}[Test for monotonicity]
+Since PN and PS are non-negative, the assumption of monotonicity implies
+\begin{equation}
+P(y_x) \geq P(y) \geq P(y_{x'})
+\end{equation}
+\end{thm}
 
 \section{Software}
 
