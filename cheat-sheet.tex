@@ -1271,6 +1271,17 @@ P(y_x) \geq P(y) \geq P(y_{x'})
 \end{equation}
 \end{thm}
 
+\subsection{Example: Betting against a fair coin}
+Consider a fair coin where $u$ denotes an outcome of heads, $x$ is betting on heads, and $y$ is winning the bet. Then
+\begin{equation}
+y=(x \wedge u) \vee (x' \wedge u').
+\end{equation}
+Plugging into our definitions of PN, PS, and PNS, we arrive at PN$=1$, PS$=1$, and PNS$=1/2$. In other words, betting heads has a 50\% chance of being a necessary and sufficient cause of winning; once we win we can be 100\% sure that our bet was necessary for our win, and once we lose we are 100\% sure that betting heads would have produced a win. Such counterfactuals cannot be recovered from merely $P(X,Y)$ because the probabilities
+\begin{equation}
+P(y|x) = P(y|x') = P(y_x) = P(y_{x'}) = P(y) = 1/2
+\end{equation}
+would also be recovered from a random payoff policy where $y$ is functionally independent of $x$ -- say by a bookie who makes a random payout regardless of our bet. The three probabilities of causation cannot be inferred from observational data alone, nor even controlled experiment. Knowledge of the functional relationship must be used these counterfactuals. Note that whether the coin is tossed before or after the bet is placed has no bearing on the probabilities of causation, in contrast to some other theories of causation.
+
 \section{Software}
 
 \subsection{Tetrad}
