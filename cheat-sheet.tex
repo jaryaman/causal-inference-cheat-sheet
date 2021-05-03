@@ -1282,6 +1282,72 @@ P(y|x) = P(y|x') = P(y_x) = P(y_{x'}) = P(y) = 1/2
 \end{equation}
 would also be recovered from a random payoff policy where $y$ is functionally independent of $x$ -- say by a bookie who makes a random payout regardless of our bet. The three probabilities of causation cannot be inferred from observational data alone, nor even controlled experiment. Knowledge of the functional relationship must be used these counterfactuals. Note that whether the coin is tossed before or after the bet is placed has no bearing on the probabilities of causation, in contrast to some other theories of causation.
 
+\section{The actual cause}
+Statements of the type ``a car accident was the cause of Joe's death'' we will call an \textbf{actual cause}, and are often referred to as ``singluar'' or ``token-level'' causal claims. Statements of the type ``car accidents cause deaths'' we will call \textbf{general cause}. General causal claims are assertions such as $P(Y_x=y)=p$, for they express the general tendancy of $x$ to bring about $y$, as judged over all potential scenarios $U$. In most particular cases, however, we do not have total episode-specific information, rather we have partial information about the episode at hand which we call \textbf{evidence}, $e$ -- for example, Joe drove a sports car and suffered a head injury. We use $e$ to update $P(u)$ into $P(u|e)$, and make causal claims derived from the model $\langle M, P(u|e) \rangle$. Causal claims derived from $\langle M, P(u|e) \rangle$ are token-level claims to varying degrees, depending on the specificity of $e$.
+
+In Fig.~\ref{Fig:actual-cause-circuit}, under the given circuit configuration, switch 1 is causing the light to be on because switch 2 can have no effect on the electric pathway. There is nothing in $PN$ or $PS$ that can account for this asymmetry, since each is based on the response function $Y_x(u)$ and is therefore oblivious to the internal workings of the circuit.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.4\columnwidth]{figures/actual-cause-circuit.jpg}  
+\end{center}
+\caption{In this configuration, switch 1 (and not switch 2) is perceived to be causing the light. Neither switch is necessary (PN$=0$) and both are sufficient (PS$=1$). Therefore the asymmetry between switch 1 and switch 2 cannot be captured with these two quantities.}
+\label{Fig:actual-cause-circuit}
+\end{figure}
+
+\subsection{Definitions}
+
+\begin{defn}[Sustenance]
+Let $W$ be as set of variables in $V$, and let $w$, $w'$ be specific realizations of these variables. We say that $x$ causally sustains $y$ in $u$ relative to contingencies in $W$ if and only if
+\begin{enumerate}[noitemsep]
+\item $X(u)=x$ (a natural value for $X$ is $x$)
+\item $Y(u)=y$ (a natural value for $Y$ is $y$)
+\item $Y_{xw}(u)=y$ for all $w$ ($x$ alone is sufficient to maintain $Y$ at its natural value, for any context $w$)
+\item $Y_{x'w'}(u)=y'\neq y$ for some $x'\neq x$ and some $w'$ (there exists some adverse condition $w'$ where $Y$ will relinquish its natural value $y$ if we set $X$ to $x'$)
+\end{enumerate}
+\end{defn}
+\noindent In other words, sustenance means there exists some setting $W=w'$ where $x$ is both necessary and sufficient for $y$.
+
+Consider a structural causal model (Defn.~\ref{defn:struct-causal-model}). We can sometimes prune such models further when we are situated at a particular state $U=u$. For example, consider $f_i=ax_1 + bux_2$, where $PA_i=\{X_1, X_2\}$. Given that $u=0$, we can safely consider $X_2$ to be a trivial argument, and replace $f_i$ with $f_i^0=ax_1$ and consider $X_1$ as the only \textit{essential} argument of $f_i$. We shall call $f_i^0$ the \textbf{projection} of $f_i$ on $u=0$. Replacing every function with its projection relative to a specific $u$ and a specific value of its nonessential part is called a \textbf{causal beam}.
+
+\begin{defn}[Causal beam] \label{defn:causal-beam}
+For model $M=\langle U, V, \{f_i\}\rangle$ and state $U=u$, a causal beam is a new model $M_u=\langle u, V, \{f_i^u\} \rangle$ in which the set of functions $f_i^u$ is constructed from $\{f_i\}$ as follows:
+\begin{enumerate}[noitemsep]
+\item For each variable $V_i \in V$, partition $PA_i$ into two subsets, $PA_i=S \cup \bar{S}$ where $S$ (connoting ``sustaining'') is any subset of $PA_i$ satisfying 
+\begin{equation}
+f_i(S(u), \bar{s}, u) = f_i(S(u), \bar{s}', u) \quad \text{for all } \bar{s}' 
+\end{equation}
+In words, $S$ is any set of $PA_i$ sufficient to entail the actual value of $V_i(u)$, regardless of how we set the other members of $PA_i$.
+\item For each variable $V_i \in V$, find a subset $W$ of $\bar{S}$ for which there exists some realization $W=w$ that renders the function $f_i(s, \bar{S}_w(u), u)$ nontrivial in $s$; that is
+\begin{equation}
+f_i(s', \bar{S}_w(u), u) \neq V_i(u) \quad \text{for some}\ s'
+\end{equation}
+\textbf{[Don't understand, related to sustenance/responsiveness. Is $W$ \textit{any} subset? So $\bar{S}_w$ is non-unique?]}
+\item Replace $f_i(s, \bar{s}, u)$ by its projection $f_i^u(s)$, which is given by
+\begin{equation}
+f_i^u(s) = f_i(s, \bar{S}_w(u), u)
+\end{equation}
+\end{enumerate}
+Thus the new parent set of $V_i$ becomes $PA_i^u=S$, and every $f^u$ function is responsive to its new parent set.
+\end{defn}
+
+\begin{defn}[Natural beam]
+A causal beam $M_u$ is said to be natural if condition 2 of Defn.~\ref{defn:causal-beam} is satisfied with $W=\emptyset$ for all $V_i \in V$.
+\end{defn}
+
+In words, a natural beam is formed by ``freezing'' all variables outside the sustaining set at their actual values, $\bar{S}(u)$, thus yielding the projection $f_i^u(s)=f_i(s,\bar{S}(u), u)$.
+
+\begin{defn}[Actual cause]
+We say that event $X=x$ was an actual cause of $Y=y$ in a state $u$ (abbreviated ``$x$ caused $y$'') if and only if there exists a natural beam $M_u$ such that
+\begin{equation}
+Y_x=y \quad \text{in } M_u
+\end{equation}
+and
+\begin{equation}
+Y_{x'}\neq y \quad \text{in } M_u \text{ for some } x' \neq x
+\end{equation}
+\end{defn}
+
 \section{Software}
 
 \subsection{Tetrad}
