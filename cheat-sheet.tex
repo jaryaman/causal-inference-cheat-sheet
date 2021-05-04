@@ -1322,7 +1322,7 @@ In words, $S$ is any set of $PA_i$ sufficient to entail the actual value of $V_i
 \begin{equation}
 f_i(s', \bar{S}_w(u), u) \neq V_i(u) \quad \text{for some}\ s'
 \end{equation}
-\textbf{[Don't understand, related to sustenance/responsiveness. Is $W$ \textit{any} subset? So $\bar{S}_w$ is non-unique?]}
+$\bar{S}$ should not intersect the sustaining set of any other variable $V_j$, $j \neq i$. Likewise, setting $W=w$ should not contradict any such setting elsewhere. I.e. $W$ is chosen to make $V_i(u)$ responsive to $S$. $W$ is potentially non-unique. \textbf{[Don't fully understand this.]}
 \item Replace $f_i(s, \bar{s}, u)$ by its projection $f_i^u(s)$, which is given by
 \begin{equation}
 f_i^u(s) = f_i(s, \bar{S}_w(u), u)
@@ -1337,7 +1337,7 @@ A causal beam $M_u$ is said to be natural if condition 2 of Defn.~\ref{defn:caus
 
 In words, a natural beam is formed by ``freezing'' all variables outside the sustaining set at their actual values, $\bar{S}(u)$, thus yielding the projection $f_i^u(s)=f_i(s,\bar{S}(u), u)$.
 
-\begin{defn}[Actual cause]
+\begin{defn}[Actual cause] \label{defn:actual-cause}
 We say that event $X=x$ was an actual cause of $Y=y$ in a state $u$ (abbreviated ``$x$ caused $y$'') if and only if there exists a natural beam $M_u$ such that
 \begin{equation}
 Y_x=y \quad \text{in } M_u
@@ -1347,6 +1347,12 @@ and
 Y_{x'}\neq y \quad \text{in } M_u \text{ for some } x' \neq x
 \end{equation}
 \end{defn}
+
+\begin{defn}[Contributory cause]
+$x$ is a contributory cause of $y$ in a state $u$ if and only if there exists a causal beam, but no natural beam, that satisfies the conditions of an actual cause.
+\end{defn}
+
+In summary, the causal beam can be interpreted as a theory that provides a sufficient and nontrivial explanation for each actual event $V_i(u) = v_i$, under a hypothetical freezing of some variables ($\bar{S}$) by the $do(\cdot)$ operator. Using this new theory, we subject the event $X=x$ to a counterfactual test and check whether $Y$ would change if $X \neq x$. If a change occurs in $Y$ when freezing takes place att the actual values of $\bar{S}$ (i.e. $W=\emptyset$), we say that ``$x$ was an actual cause of $y$''. If changes occur only under a freeze state that is removed from the actual state (i.e. $W\neq \emptyset$), we say that ``$x$ was a contributory cause of $y$''. [\textbf{Don't understand}]
 
 \section{Software}
 
