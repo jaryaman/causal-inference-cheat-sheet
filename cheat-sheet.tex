@@ -1352,7 +1352,41 @@ Y_{x'}\neq y \quad \text{in } M_u \text{ for some } x' \neq x
 $x$ is a contributory cause of $y$ in a state $u$ if and only if there exists a causal beam, but no natural beam, that satisfies the conditions of an actual cause.
 \end{defn}
 
-In summary, the causal beam can be interpreted as a theory that provides a sufficient and nontrivial explanation for each actual event $V_i(u) = v_i$, under a hypothetical freezing of some variables ($\bar{S}$) by the $do(\cdot)$ operator. Using this new theory, we subject the event $X=x$ to a counterfactual test and check whether $Y$ would change if $X \neq x$. If a change occurs in $Y$ when freezing takes place att the actual values of $\bar{S}$ (i.e. $W=\emptyset$), we say that ``$x$ was an actual cause of $y$''. If changes occur only under a freeze state that is removed from the actual state (i.e. $W\neq \emptyset$), we say that ``$x$ was a contributory cause of $y$''. [\textbf{Don't understand}]
+In summary, the causal beam can be interpreted as a theory that provides a sufficient and nontrivial explanation for each actual event $V_i(u) = v_i$, under a hypothetical freezing of some variables ($\bar{S}$) by the $do(\cdot)$ operator. Using this new theory, we subject the event $X=x$ to a counterfactual test and check whether $Y$ would change if $X \neq x$. If a change occurs in $Y$ when freezing takes place at the actual values of $\bar{S}$ (i.e. $W=\emptyset$), we say that ``$x$ was an actual cause of $y$''. If changes occur only under a freeze state that is removed from the actual state (i.e. $W\neq \emptyset$), we say that ``$x$ was a contributory cause of $y$''. [\textbf{Don't understand}]
+
+Suppose that the state $u$ is uncertain, and that the uncertainty is characterized by $P(u)$. If $e$ is the evidence available in the case, then the probability that $x$ caused $y$ can be otained by summing up the weight of evidence $P(u|e)$ over all states $u$ in which the assertion ``$x$ caused $y$'' is true:
+\begin{defn}[Probability of actual causation]
+Let $U_{xy}$ be the set of states in which the assertion ``$x$ is an actual cause of $y$'' is true (Defn.~\ref{defn:actual-cause}), and let $U_e$ be the set of states compatible with the evidence $e$. The probability that $x$ caused $y$ in light of evidence $e$, denoted $P(\text{caused}(x, y|e))$, is given by
+\begin{equation}
+P(\text{caused}(x, y|e)) = \frac{P(U_{xy} \bigcap U_e)}{ P(U_e)}
+\end{equation}
+\end{defn}
+
+\subsection{Examples}
+\subsubsection{Disjunctive normal form}
+Consider a single mechanism characterized by the Boolean function
+\begin{equation}
+y = f(x,z,r,h,t,u) = xz \vee rh \vee t, \nonumber
+\end{equation}
+where $X,Z,R,H,T$ are assumed to be causally independent. 
+
+Consider a state $U=u$ such that
+\begin{equation}
+X(u)=Z(u)=R(u)=H(u)=T(u)=Y(u)=\text{ true}. \nonumber
+\end{equation}
+In this state, every disjunct represents a minimal set of sustaining variables. In particular, taking $S=\{X,Z\}$, we find that the projection $f^u(x,z)=f(x,z, R(u), H(u), T(u))$ becomes trivially true. Thus, there is no natural beam $M_u$, and $x$ could not be the actual cause of $y$. Feasible causal beams can be obtained by using $w=\{r', t'\}$, where primes denote complementation. Each of these two choices yields the projection $f^u(x,z) = xz$. $M_u$ satisfies the conditions in Defn.~\ref{defn:actual-cause}, but since there is no natural beam, $x$ is therefore a contributory cause of $y$.
+
+\subsubsection{Single mechanism in general boolean form}
+
+Consider the function
+\begin{equation}
+y=f(x,z,h,u) = xz' \vee x'z \vee xh'.
+\end{equation}
+We consider the state $U=u$ such that
+\begin{equation}
+X(u)=Z(u)=H(u)=\text{ true} \implies Y(u)=\text{ false}. \nonumber
+\end{equation}
+We inquire whether the event $X = \text{true}$ caused the event $Y = \text{false}$. In this state, there is only one sustaining set $S=\{X,Z,H\}$, because no choice of two variables (valued at this $u$) would entail $Y=\text{ false}$ regardless of the third. Since $\bar{S}$ is empty, the choice of beam is unique, for which $y=f^u(x,z,h,u) = xz' \vee x'z \vee xh'$, and the beam is therefore natural. This passes the conditions in Defn.~\ref{defn:actual-cause}, hence we conclude that $x$ was an actual cause of $y$. Similarly, we can see that the event $H= \text{true}$ was also an actual cause of $Y= \text{false}$. 
 
 \section{Software}
 
